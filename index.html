@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사용자 조사 환경 셋팅 가이드</title>
+<style>
+:root{
+  --bg:#ffffff; --bg-sub:#f5f5f3; --border:#e6e4dd; --border-strong:#d4d1c6;
+  --text:#1d1d1b; --text-sub:#6e6d66; --text-muted:#9b9a92;
+  --accent:#0c447c; --accent-bg:#eaf3fb;
+  --warn:#7a4a0a; --warn-bg:#faf0dd;
+  --radius:10px; --sidebar-w:380px;
+  font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
+body{display:flex;min-height:100vh;font-size:19px;line-height:1.65;word-break:keep-all;}
+
+/* ---- 사이드바 ---- */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--bg-sub);height:100vh;position:sticky;top:0;overflow-y:auto;
+  padding:28px 18px 60px;
+}
+#sidebar .brand{font-size:15px;font-weight:600;padding:4px 10px 18px;color:var(--text);letter-spacing:-0.01em;}
+#sidebar .brand small{display:block;font-weight:400;color:var(--text-sub);font-size:12.5px;margin-top:3px;}
+#search{
+  width:100%;padding:10px 12px;margin-bottom:16px;border:1px solid var(--border-strong);
+  border-radius:var(--radius);font-size:14px;background:#fff;color:var(--text);
+}
+#search:focus{outline:2px solid #85b7eb;outline-offset:0;}
+.nav-cover{
+  display:block;padding:8px 10px;border-radius:7px;
+  color:var(--text);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:12px;
+}
+.nav-cover:hover{background:var(--bg);}
+.nav-section-label{
+  display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.04em;padding:16px 10px 5px;text-decoration:none;
+}
+.nav-section-label:hover{color:var(--text-sub);}
+.nav-item{
+  display:block;padding:6.5px 10px 6.5px 18px;border-radius:7px;color:var(--text-sub);
+  text-decoration:none;font-size:14px;line-height:1.5;
+}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-group{
+  display:flex;align-items:center;gap:4px;
+  padding:6.5px 10px 6.5px 18px;border-radius:7px;color:var(--text-sub);
+  text-decoration:none;font-size:14px;font-weight:400;line-height:1.5;
+}
+.nav-group:hover{background:var(--bg);color:var(--text);}
+.nav-chevron{
+  flex-shrink:0;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-muted);transition:transform .15s ease;cursor:pointer;
+}
+.nav-chevron svg{width:100%;height:100%;}
+.nav-group-block.expanded > .nav-group .nav-chevron{transform:rotate(180deg);}
+.nav-group-children{display:none;}
+.nav-group-block.expanded > .nav-group-children{display:block;}
+.nav-item-sub{padding-left:44px;font-size:13.5px;}
+.nav-item.active,.nav-section-label.active,.nav-group.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+
+/* ---- 본문 공통 ---- */
+#main{flex:1;min-width:0;padding:0 80px 200px;}
+.hero-cover{padding:22vh 0 14vh;text-align:left;border-bottom:1px solid var(--border);margin-bottom:10vh;}
+.hero-cover-brand{font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.1em;margin-bottom:18px;}
+.hero-cover h1{font-size:88px;font-weight:600;line-height:1.12;margin:0 0 28px;letter-spacing:-0.02em;max-width:1100px;}
+.hero-cover-sub{font-size:18px;color:var(--text-sub);}
+
+.part-hero,.part-label-only{padding:20vh 0 10vh;}
+.part-hero{border-top:1px solid var(--border);margin-top:8vh;}
+.part-kicker{font-size:14px;font-weight:600;color:var(--accent);letter-spacing:.06em;margin-bottom:14px;}
+.part-title{font-size:56px;font-weight:600;line-height:1.15;margin:0 0 22px;letter-spacing:-0.015em;max-width:1100px;}
+.part-title-sm{font-size:56px;font-weight:600;line-height:1.15;margin:0;letter-spacing:-0.015em;max-width:1100px;}
+.part-intro{font-size:22px;color:var(--text-sub);max-width:1000px;line-height:1.55;margin-bottom:8px;}
+.part-intro p{margin:0;}
+.divider-list{margin:24px 0 0;padding-left:0;list-style:none;font-size:19px;color:var(--text);max-width:520px;}
+.divider-list li{padding:12px 0;border-top:1px solid var(--border);}
+.divider-list li:last-child{border-bottom:1px solid var(--border);}
+
+.group-title{font-size:28px;font-weight:600;margin:12vh 0 0;letter-spacing:-0.01em;color:var(--text);}
+
+.subpage{padding-top:12vh;scroll-margin-top:24px;}
+.group-title + .subpage{padding-top:4vh;}
+.subpage h2{font-size:26px;font-weight:600;margin:0 0 14px;line-height:1.35;letter-spacing:-0.01em;max-width:1000px;}
+.subpage h2.leaf-pill{
+  display:inline-block;font-size:17px;font-weight:600;padding:9px 22px;
+  border-radius:999px;background:var(--text);border:1px solid var(--text);
+  color:var(--bg);margin:0 0 18px;letter-spacing:.01em;
+}
+.page-subtext{font-size:20px;color:var(--text-sub);margin:0 0 40px;max-width:1000px;line-height:1.55;text-wrap:balance;word-break:keep-all;}
+.page-subtext.footnote{font-size:13px;font-style:italic;color:var(--text-muted);margin-top:-24px;}
+.tag-pill{display:inline-block;font-size:12px;font-weight:600;padding:4px 13px;border-radius:999px;margin-right:10px;letter-spacing:.02em;white-space:nowrap;vertical-align:2px;}
+.tag-pill.tag-issue{background:var(--warn-bg);color:var(--warn);}
+.tag-pill.tag-idea{background:var(--accent-bg);color:var(--accent);}
+
+.page-cont p{margin:0 0 24px;font-size:16px;max-width:1000px;}
+.page-cont .footnote,.split-box .footnote{font-size:13px;font-style:italic;color:var(--text-muted);}
+.page-cont h4{font-size:19px;font-weight:600;margin:36px 0 14px;color:var(--text);max-width:1000px;}
+.page-cont h4.h4-note{font-size:16px;}
+.step-main{font-weight:500;display:inline-block;text-wrap:balance;word-break:keep-all;}
+.step-note{color:var(--text-sub);font-size:15px;font-weight:300;}
+
+ul.cont-list,ul.sub{margin:0 0 24px;padding-left:24px;font-size:16px;max-width:1000px;}
+ul.cont-list li,ul.sub li{margin-bottom:8px;line-height:1.55;}
+ul.sub{margin-top:10px;font-size:15px;color:var(--text-sub);font-weight:300;list-style-type:disc;}
+
+/* 순서 있는 절차: 번호 -> 구분선 -> 텍스트 -> 이미지(항상 맨 아래) */
+ol.cont-steps{display:flex;flex-wrap:wrap;gap:40px 24px;list-style:none;margin:0 0 32px;padding:0;max-width:none;}
+ol.cont-steps > li{flex:1 0 220px;max-width:400px;margin-bottom:0;padding-left:0;}
+ol.cont-steps > li > .step-num{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:32px;height:32px;border-radius:50%;background:transparent;color:var(--text-sub);
+  border:1.5px solid var(--border-strong);font-size:13px;font-weight:600;margin-bottom:16px;
+}
+ol.cont-steps > li > .step-rule{border-top:2px solid var(--border-strong);margin-bottom:16px;}
+ol.cont-steps > li > .step-text{font-size:16px;line-height:1.6;color:var(--text);}
+ol.cont-steps > li > .cont-fig{margin:16px 0 0;}
+
+/* 그룹(①②③ 등) 자체가 스텝인 경우 — 안에 목록/이미지가 들어가므로 훨씬 넓게 */
+ol.cont-steps.cont-steps-wide{gap:48px 40px;}
+ol.cont-steps.cont-steps-wide > li{flex:1 1 340px;max-width:560px;}
+ol.cont-steps.cont-steps-wide > li > .step-text > .step-main{display:block;font-size:19px;font-weight:600;margin-bottom:16px;}
+ol.cont-steps.cont-steps-wide > li > .step-text p{font-size:16px;line-height:1.6;color:var(--text);margin:0 0 16px;}
+
+ul.cont-checklist{list-style:none;margin:0 0 24px;padding:0;max-width:1000px;}
+ul.cont-checklist li.check{display:flex;align-items:flex-start;gap:12px;font-size:16px;padding:8px 0;border-bottom:1px solid var(--border);}
+ul.cont-checklist li.check:first-child{border-top:1px solid var(--border);}
+ul.cont-checklist .box{
+  width:20px;height:20px;color:var(--text-sub);
+  margin-top:2px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
+}
+
+/* 절차의 단순 불릿 버전 (카드 안 등 스테퍼가 과한 곳에서 사용) */
+ul.cont-bullets{list-style:none;margin:0 0 24px;padding:0;max-width:1000px;font-size:16px;line-height:1.6;color:var(--text);}
+ul.cont-bullets > li{position:relative;padding-left:20px;margin-bottom:24px;}
+ul.cont-bullets > li::before{content:"•";position:absolute;left:2px;top:0;color:var(--text-sub);}
+ul.cont-bullets .bullet-desc{margin-top:6px;}
+ul.cont-bullets .cont-fig{margin-top:12px;}
+ul.cont-bullets.cont-numbered > li::before{content:none;}
+ul.cont-bullets.cont-numbered > li{padding-left:26px;}
+ul.cont-bullets.cont-numbered .num-marker{position:absolute;left:0;top:0;color:var(--text-sub);font-weight:600;}
+
+/* TV 4분할처럼 실제 화면 위치가 있는 매핑은 2x2 그리드로 */
+.quad-grid{
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:1px;background:var(--border);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;max-width:420px;aspect-ratio:16/9;margin:0 0 24px;
+}
+.quad-cell{
+  background:var(--bg-sub);display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:center;gap:8px;padding:16px 20px;
+}
+.quad-num{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--bg);
+  font-size:12px;font-weight:600;
+}
+.quad-label{font-size:14px;font-weight:500;color:var(--text-sub);}
+.quad-grid-row{display:flex;flex-wrap:wrap;gap:32px;margin-bottom:8px;}
+.quad-grid-item{flex:0 1 420px;}
+.quad-grid-item .quad-grid{margin-bottom:0;}
+.quad-case-label{font-size:13px;font-weight:600;color:var(--text-sub);margin-bottom:10px;}
+
+/* 장비/저장매체 사양표 -> 사진 카드 그리드 (세로 스크롤 과다 방지) */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:24px;margin-bottom:8px;max-width:1400px;}
+.spec-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg-sub);}
+.spec-card img{width:100%;height:170px;object-fit:cover;display:block;}
+.spec-card-body{padding:14px 16px 18px;}
+.spec-cat{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
+.spec-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4;}
+.spec-desc{font-size:13px;color:var(--text-sub);line-height:1.5;}
+
+/* 큰 정의형 목록 (단순 2열 표 대체) */
+.def-list{
+  margin:0 0 24px;max-width:820px;border:1px solid var(--border);
+  border-radius:12px;padding:2px 20px;background:var(--bg-sub);
+}
+.def-row{display:flex;gap:20px;padding:10px 0;border-bottom:1px solid var(--border);align-items:baseline;}
+.def-row:first-child{border-top:none;}
+.def-row:last-child{border-bottom:none;}
+.def-term{font-size:14px;font-weight:600;flex:0 0 88px;color:var(--text-sub);}
+.def-desc{font-size:15px;color:var(--text-sub);line-height:1.5;}
+
+.cont-table-wrap{overflow-x:auto;margin:0 0 32px;}
+table.cont-table{border-collapse:collapse;width:100%;font-size:16px;max-width:1120px;}
+table.cont-table th,table.cont-table td{
+  border-bottom:1px solid var(--border);padding:16px 18px 16px 0;text-align:left;vertical-align:top;
+}
+table.cont-table th{font-weight:600;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border-strong);}
+table.cont-table tr:last-child td{border-bottom:none;}
+table.cont-table tr.img-row td{padding:14px 0 26px;}
+
+.changelog-footer{border-top:1px solid var(--border);margin-top:14vh;padding:48px 0 10vh;}
+.changelog-title{font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;margin:0 0 18px;}
+table.changelog-table{border-collapse:collapse;width:100%;font-size:13px;max-width:1120px;color:var(--text-sub);}
+table.changelog-table th,table.changelog-table td{
+  border-bottom:1px solid var(--border);padding:10px 16px 10px 0;text-align:left;vertical-align:top;
+}
+table.changelog-table th{font-weight:600;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border-strong);}
+table.changelog-table td:first-child,table.changelog-table th:first-child{white-space:nowrap;}
+table.changelog-table td:nth-child(2),table.changelog-table th:nth-child(2){white-space:nowrap;}
+table.changelog-table tr:last-child td{border-bottom:none;}
+.changelog-note{font-size:12px;font-style:italic;color:var(--text-muted);margin:18px 0 0;}
+a.jump-link{color:var(--accent);text-decoration:none;font-weight:600;}
+a.jump-link:hover{text-decoration:underline;}
+
+.cont-fig{margin:16px 0;display:block;max-width:350px;}
+.cont-fig img{max-width:min(350px,100%);max-height:350px;width:auto;height:auto;border-radius:12px;display:block;}
+.cont-fig figcaption{font-size:13px;color:var(--text-muted);margin-top:8px;}
+.cont-img-solo{margin:24px 0;max-width:350px;}
+
+.cont-code{
+  background:var(--bg-sub);border:1px solid var(--border);border-radius:12px;
+  padding:20px 22px;font-size:14.5px;line-height:1.75;overflow-x:auto;white-space:pre-wrap;
+  font-family:'SF Mono',ui-monospace,Consolas,monospace;color:var(--text);margin:0 0 24px;max-width:820px;
+}
+code{font-family:'SF Mono',ui-monospace,Consolas,monospace;font-size:0.9em;background:var(--bg-sub);padding:2px 6px;border-radius:5px;}
+
+.callout{display:flex;gap:12px;align-items:flex-start;padding:16px 20px;border-radius:var(--radius);margin:0 0 24px;font-size:16px;max-width:900px;}
+.callout i{font-style:normal;font-weight:600;flex-shrink:0;}
+.callout-warn{background:var(--warn-bg);color:var(--warn);}
+.callout-note{background:var(--accent-bg);color:var(--accent);}
+
+/* 배치도 페이지: 이미지 좌측 / 표+박스 우측 2단 레이아웃 */
+.split-layout{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:64px;align-items:start;margin-bottom:8px;max-width:1400px;}
+.split-image .cont-fig,.split-image .cont-img-solo{max-width:100%;margin:0;}
+.split-image img{width:100%;max-width:100%;max-height:none;height:auto;}
+.split-right{display:flex;flex-direction:column;gap:24px;min-width:0;}
+.split-table .cont-table-wrap{margin-bottom:0;}
+.split-table table.cont-table{max-width:100%;}
+.split-box{border:1px solid var(--border);border-radius:12px;padding:24px 28px;background:var(--bg-sub);}
+.example-box{border:1px solid var(--border);border-radius:12px;padding:24px 28px;background:var(--bg-sub);margin:0 0 24px;max-width:820px;}
+.example-box h4.h4-note{margin:0 0 14px;}
+.example-box pre.cont-code{background:transparent;border:none;padding:0;margin:0;max-width:none;}
+.table-box{border:1px solid var(--border);border-radius:12px;padding:24px 28px;background:var(--bg-sub);margin:0 0 24px;max-width:1100px;}
+.table-box .cont-table-wrap{margin-bottom:0;}
+.table-box table.cont-table{max-width:100%;}
+.table-box p:last-child{margin:16px 0 0;}
+.table-box h4:first-child{margin-top:0;}
+.table-box tr.note-row td{font-size:13px;font-style:italic;color:var(--text-muted);padding-top:16px;border-bottom:none;}
+.flow-diagram{position:relative;display:flex;gap:32px;margin:0 0 32px;max-width:1120px;}
+.flow-diagram::before{content:"";position:absolute;top:6px;left:7px;right:7px;height:2px;background:var(--border-strong);}
+.flow-stage{position:relative;flex:1 1 0;min-width:0;}
+.flow-node{width:14px;height:14px;border-radius:50%;background:var(--text);position:relative;margin-bottom:16px;}
+.flow-stage-label{font-size:13px;font-weight:600;color:var(--text-sub);margin-bottom:10px;}
+.flow-stage-items{list-style:none;margin:0;padding:0;font-size:15px;color:var(--text);line-height:1.6;}
+.flow-stage-items li{margin-bottom:6px;}
+.flow-stage-items li:last-child{margin-bottom:0;}
+.flow-track-text{font-size:15px;line-height:1.7;color:var(--text);margin:0;}
+.cont-img-large{max-width:700px;}
+.cont-img-large .cont-fig{max-width:100%;}
+.cont-img-large .cont-fig img{max-width:100%;max-height:none;width:100%;height:auto;}
+.split-box h4{font-size:16px;font-weight:600;margin:0 0 12px;}
+.split-box p,.split-box ul.cont-list li{font-size:16px;color:var(--text-sub);}
+.split-box p:last-child,.split-box ul:last-child{margin-bottom:0;}
+.split-box > h4:not(:first-child){margin-top:28px;padding-top:24px;border-top:1px solid var(--border);}
+
+/* 표 좌측 / 보충 노트 박스 우측 (역할표 등) */
+.table-note-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,680px);gap:56px;align-items:start;margin-bottom:8px;max-width:1600px;}
+
+/* 좌우 2단 카드 (참여자뷰/전경CCTV, 카메라 설치/촬영영역 표시 등) */
+.two-col-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px;margin-bottom:8px;max-width:1700px;}
+.two-card{
+  min-width:0;border:1px solid var(--border);border-radius:12px;
+  background:var(--bg-sub);padding:28px 32px;
+}
+.two-card h4{margin-top:0;}
+.two-card p{font-weight:500;}
+.two-card ul.cont-list li{font-weight:300;}
+ul.check-marks{list-style:none;padding-left:0;}
+ul.check-marks li{position:relative;padding-left:26px;}
+ul.check-marks li::before{content:"✓";position:absolute;left:0;top:0;color:var(--text-sub);font-weight:600;}
+
+/* 참고성 코멘트 — 본문과 분리된 작은 박스 */
+.note-aside{
+  border:1px solid var(--border);border-radius:12px;padding:18px 22px;
+  background:var(--bg-sub);max-width:640px;margin:8px 0 24px;
+}
+.note-aside h4{font-size:14px;margin:0 0 8px;color:var(--text-sub);}
+.note-aside p{font-size:14px;color:var(--text-sub);margin:0;max-width:100%;}
+
+@media (max-width:900px){
+  body{flex-direction:column;font-size:17px;}
+  #sidebar{position:relative;width:100%;height:auto;max-height:44vh;}
+  #main{padding:0 24px 120px;max-width:100%;}
+  .part-title{font-size:38px;}
+  .subpage h2{font-size:22px;}
+  .hero-cover h1{font-size:32px;}
+  .split-layout{grid-template-columns:1fr;gap:24px;}
+  .two-col-cards{grid-template-columns:1fr;gap:32px;}
+  .table-note-layout{grid-template-columns:1fr;gap:24px;}
+  .flow-diagram{flex-direction:column;gap:20px;}
+  .flow-diagram::before{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="brand">사용자 조사 환경 셋팅 가이드<small>바이널씨 · v1.00</small></div>
+  <input id="search" type="text" placeholder="검색 (예: 마이크, 체크리스트)">
+  <a href="#p01" class="nav-cover" data-page="p01">표지</a>
+<a href="#p02" class="nav-section-label" data-page="p02">I. 빠르게 살펴보기</a>
+<a href="#p02" class="nav-item" data-page="p02">가이드 목적</a>
+<a href="#p03" class="nav-item" data-page="p03">빠른 찾기</a>
+<a href="#p04" class="nav-item" data-page="p04">용어 정리</a>
+<a href="#p05" class="nav-section-label" data-page="p05">II. 사전 준비</a>
+<a href="#p06" class="nav-item" data-page="p06">조사 유형 확인</a>
+<a href="#p07" class="nav-item" data-page="p07">조사 진행 환경 (UT)</a>
+<a href="#p08" class="nav-item" data-page="p08">조사 진행 환경 (FGI)</a>
+<a href="#p09" class="nav-item" data-page="p09">회의실 예약</a>
+<div class="nav-group-block"><a href="#p10" class="nav-group" data-page="p10"><span class="nav-group-label">장비 세팅</span><span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></a><div class="nav-group-children"><a href="#p10" class="nav-item nav-item-sub" data-page="p10">조사실 - 영상·오디오 연결</a><a href="#p11" class="nav-item nav-item-sub" data-page="p11">조사실 - 인물 카메라</a><a href="#p12" class="nav-item nav-item-sub" data-page="p12">조사실 - 시료 카메라</a><a href="#p13" class="nav-item nav-item-sub" data-page="p13">조사실 - 무선 마이크</a><a href="#p14" class="nav-item nav-item-sub" data-page="p14">관찰실</a><a href="#p15" class="nav-item nav-item-sub" data-page="p15">장비 체크리스트</a></div></div>
+<a href="#p16" class="nav-section-label" data-page="p16">III. 조사 진행</a>
+<a href="#p17" class="nav-item" data-page="p17">조사인력 구성 및 역할</a>
+<a href="#p18" class="nav-item" data-page="p18">역할별 핵심 업무</a>
+<a href="#p19" class="nav-item" data-page="p19">마이크 착용 및 음향 확인</a>
+<a href="#p20" class="nav-item" data-page="p20">실시간 자동 번역 (외국인)</a>
+<a href="#p21" class="nav-item" data-page="p21">스크립트 정리 방법</a>
+<a href="#p22" class="nav-section-label" data-page="p22">IV. 부록</a>
+<a href="#p23" class="nav-item" data-page="p23">영상·음향 신호 송출흐름도</a>
+<a href="#p24" class="nav-item" data-page="p24">주요 장비 사양 정보</a>
+<a href="#p25" class="nav-item" data-page="p25">저장매체 정보</a>
+<a href="#p26" class="nav-item" data-page="p26">참여자 컨택 - 사전 프로세스</a>
+<a href="#p27" class="nav-item" data-page="p27">참여자 컨택 - 당일/조사후 프로세스</a>
+<a href="#p28" class="nav-item" data-page="p28">동의서 양식 - 내국인</a>
+<a href="#p29" class="nav-item" data-page="p29">동의서 양식 - 외국인(참여자)</a>
+<a href="#p30" class="nav-item" data-page="p30">동의서 양식 - 외국인(통역사)</a>
+<a href="#p31" class="nav-section-label" data-page="p31">V. 추가 개선 아이디어</a>
+<a href="#p32" class="nav-item" data-page="p32">조사 진행간 소통 방식</a>
+<a href="#p33" class="nav-item" data-page="p33">IDI 조사실 배치</a>
+<a href="#p34" class="nav-item" data-page="p34">모바일 외 시료 탑뷰 세팅</a>
+<a href="#p35" class="nav-item" data-page="p35">UT 외 조사 유형 장비·마이크 구성</a>
+<a href="#p36" class="nav-item" data-page="p36">참여자 대기 장소·동선</a>
+<a href="#p37" class="nav-item" data-page="p37">STT Raw data 정제 및 Matrix Table 작성</a>
+</nav>
+
+<main id="main">
+  <section class="hero-cover" id="p01" data-page="p01"><div class="hero-cover-brand">VINYLC</div><h1>사용자 조사 환경<br>세팅 실행 가이드</h1><div class="hero-cover-sub">2026.08 / V1.00</div></section>
+<div class="part-label-only" id="p02" data-page="p02"><div class="part-kicker">I</div><h2 class="part-title-sm">빠르게 살펴보기</h2></div>
+<section class="subpage" id="p02" data-page="p02"><h2>가이드 목적</h2><p class="page-subtext">본 가이드는 VINYLC 조사 현장 세팅에 필요한 공간·장비·인력·운영 절차를 표준화하여, 담당자의 경험과 숙련도에 관계없이 안정적으로 사용자 조사를 운영하는 것을 목적으로 합니다.</p><div class="page-cont"><h4>문서 구성</h4>
+<div class="def-list"><div class="def-row"><span class="def-term"><strong>사전 준비</strong></span><span class="def-desc">조사를 시작하기 전 필요한 조사 환경과 장비를 준비하는 방법을 안내합니다.<br>- 조사 유형 확인<br>- 조사 진행 환경(UT·FGI)<br>- 장비 세팅</span></div><div class="def-row"><span class="def-term"><strong>조사 진행</strong></span><span class="def-desc">조사 당일 원활한 진행을 위한 인력 구성과 역할별 업무를 안내합니다.<br>- 조사인력 구성 및 역할<br>- 역할별 핵심 업무<br>- 마이크 착용 및 음향 확인<br>- 실시간 자동 번역(외국인)</span></div><div class="def-row"><span class="def-term"><strong>부록</strong></span><span class="def-desc">조사 진행 중 참고할 수 있는 장비와 운영 관련 세부 정보를 제공합니다.<br>- 영상·음향 신호 송출흐름도<br>- 주요 장비 사양 정보<br>- 저장매체 정보<br>- 참여자 컨택 프로세스(사전·당일/조사후)<br>- 동의서 양식(내국인·외국인 참여자·외국인 통역사)</span></div><div class="def-row"><span class="def-term"><strong>추가 개선 아이디어</strong></span><span class="def-desc">조사 환경과 운영 방식을 지속적으로 개선하기 위한 아이디어와, 조사 유형·환경이 달라질 경우 추가 확인이 필요한 이슈를 정리합니다.<br>- 조사 진행간 소통 방식<br>- IDI 조사실 배치 · 모바일 외 시료 탑뷰 세팅 · UT 외 조사 유형 장비·마이크 구성<br>- 참여자 대기 장소·동선 · STT Raw data 정제 및 Matrix Table 작성</span></div></div></div></section>
+<section class="subpage" id="p03" data-page="p03"><h2>빠른 찾기</h2><p class="page-subtext">처음부터 순서대로 읽지 않아도, 지금 필요한 내용이 있는 페이지로 바로 찾아갈 수 있도록 상황별 상세 페이지를 안내합니다.</p><div class="page-cont"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>구분</th><th>주요 내용</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p06">조사 유형별 구성</a></td><td>FGI·UT에 따른 참여 인원과 장비 구성 차이</td></tr><tr><td><a class="jump-link" href="#p07">조사실 배치</a></td><td>조사 유형별 좌석·카메라 설치 위치</td></tr><tr><td><a class="jump-link" href="#p09">회의실 예약</a></td><td>실사 당일 1층·4층 공간 사전 예약 및 안내문 부착</td></tr><tr><td><a class="jump-link" href="#p10">카메라 세팅</a></td><td>카메라 연결부터 화각·탑뷰 촬영 영역 설정 방법</td></tr><tr><td><a class="jump-link" href="#p13">마이크 세팅</a></td><td>송출·녹화용 마이크 연결 및 작동 상태 확인</td></tr><tr><td><a class="jump-link" href="#p14">사용자 관찰실 세팅</a></td><td>4층 화면·음향 수신 및 송출 상태 확인</td></tr><tr><td><a class="jump-link" href="#p15">세팅 완료 확인</a></td><td>조사 시작 전 최종 점검 항목</td></tr><tr><td><a class="jump-link" href="#p17">필요 인력 및 역할</a></td><td>조사 운영에 필요한 인원 구성과 역할 분담</td></tr><tr><td><a class="jump-link" href="#p18">조사 진행 체크리스트</a></td><td>시작부터 종료까지 단계별 운영 확인 사항</td></tr><tr><td><a class="jump-link" href="#p20">외국인 대상 인터뷰</a></td><td>Tiro를 활용한 실시간 번역 및 화면 송출</td></tr><tr><td><a class="jump-link" href="#p21">스크립트 정리</a></td><td>촬영 영상에서 음성 추출 및 Tiro를 통한 텍스트 스크립트 변환 방법</td></tr><tr><td><a class="jump-link" href="#p24">장비·저장매체 정보</a></td><td>현행 장비 사양과 촬영용 저장매체 기준</td></tr><tr><td><a class="jump-link" href="#p26">참여자 컨택</a></td><td>조사 전 참여자 안내를 위한 문자·전화 스크립트</td></tr><tr><td><a class="jump-link" href="#p28">동의서 양식</a></td><td>내국인·외국인 참여자 및 외국인 통역사용 개인정보·비밀유지·사례비 동의서 양식</td></tr><tr><td><a class="jump-link" href="#p31">이슈·개선 아이디어</a></td><td>조사 진행간 소통 방식, 조사 환경별 미확정 사항, 운영 개선 아이디어</td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p04" data-page="p04"><h2>용어 정리</h2><p class="page-subtext">기존 문서마다 다르게 사용하던 공간 명칭을 정리하고, 실사 후 실제 역할을 가장 직관적으로<br>설명하는 두 가지 명칭으로 확정합니다.</p><div class="page-cont"><div class="cont-table-wrap"><table class="cont-table" style="table-layout:fixed"><colgroup><col style="width:24%"><col style="width:22%"><col style="width:12%"><col style="width:42%"></colgroup><thead><tr><th>기존 표기</th><th>확정 명칭</th><th>위치</th><th>용도</th></tr></thead><tbody><tr><td>UT 룸, 사용자 조사룸</td><td><strong>사용자 조사실</strong></td><td>1층</td><td><strong>실사(實査)가 실제로 이루어지는 방.</strong> 참여자와 진행자가 대면해 조사(FGI·UT 등)를 진행하고, 카메라·마이크로 그 장면을 촬영·녹음해 4층으로 실시간 송출합니다.</td></tr><tr><td>(명칭 없음, "X")</td><td><strong>사용자 관찰실</strong></td><td>4층</td><td><strong>조사 장면을 실시간으로 지켜보는 방.</strong> 1층에서 올라온 영상·음향을 수신해 참관(고객사 포함)·모니터링·노트테이킹을 수행합니다. 참여자는 이 공간에 들어오지 않습니다.</td></tr></tbody></table></div></div></section>
+<section class="part-hero" id="p05" data-page="p05"><div class="part-kicker">II</div><h1 class="part-title">사전 준비</h1><div class="part-intro"><p>조사 유형 확인부터 공간 배치, 회의실 예약, 장비 세팅, 4층 사용자 관찰실의 영상·음향 송출 확인까지 <strong>실사 전 반드시 완료해야 하는 항목을 순서대로 안내합니다.</strong></p></div></section>
+<section class="subpage" id="p06" data-page="p06"><h2>조사 유형 확인 — FGI · UT 구성 비교</h2><p class="page-subtext">FGI와 UT는 좌석 배치·마이크 구성·카메라 촬영 대상 및 TV 화면 구성이 서로 다릅니다. 따라서 세팅을 시작하기 전 조사 유형을 먼저 확인합니다.</p><div class="page-cont"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>구분</th><th>FGI (포커스 그룹 인터뷰)</th><th>UT (사용자 테스트)</th></tr></thead><tbody><tr><td><strong>카메라 구성</strong></td><td>참여자뷰 2대 + 전경 CCTV 1대</td><td>참여자뷰 1대 + 시료 탑뷰 1대 + 전경 CCTV 1대</td></tr><tr><td><strong>마이크 구성</strong></td><td>유선·무선 마이크 총 4대</td><td>무선 마이크 2대 + 핀마이크 2대</td></tr><tr><td><strong>참여자 구성</strong></td><td>참여자 6명</td><td>참여자 1명 + 시료(제품 등)</td></tr><tr><td><strong>TV 4분할 구성</strong></td><td>참여자 그룹① · 참여자 그룹② · 전경 · PC</td><td>참여자 · 전경 · 탑뷰(시료) · 모바일*</td></tr></tbody></table></div>
+<p><span class="footnote">*외국인 세션 진행 시 모바일 화면에는 Tiro 실시간 번역 화면을 송출합니다.</span></p></div></section>
+<section class="subpage" id="p07" data-page="p07"><h2>조사 진행 환경 (UT)</h2><p class="page-subtext">진행자와 참여자가 1:1로 옆에 앉는 구조에 맞춰, 참여자·공간·시료 조작 과정을 각각 기록할 수 있도록 카메라를 배치합니다.</p><div class="page-cont"><div class="split-layout"><div class="split-image"><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-1.jpeg" alt="UT 조사실 배치도 — 실측 반영본" loading="lazy"></figure></div></div><div class="split-right"><div class="split-table"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>카메라</th><th>설치 위치</th><th>촬영 방향·대상</th></tr></thead><tbody><tr><td>참여자뷰</td><td>우측 중앙</td><td>참여자 중심 촬영</td></tr><tr><td>전경 CCTV</td><td>우측 상단(TV 옆)</td><td>참여자와 진행자를 포함한 조사 공간 전반 촬영</td></tr><tr><td>시료 탑뷰</td><td>시료 바로 위</td><td>시료를 수직 방향으로 촬영</td></tr></tbody></table></div></div><div class="split-box"><h4>좌석·마이크</h4><ul class="cont-list"><li>진행자와 참여자는 테이블 좌측에 <strong>양 옆으로 착석</strong>합니다.</li><li>진행자와 참여자에게 각각 무선 마이크 1대, 핀마이크 1대를 사용하며 총 4대의 마이크로 구성합니다.</li></ul><p><span class="footnote">※ 위 UT 구성은 <strong>시료(모바일)를 조작하는 조사</strong>를 전제로 합니다. 시료 없이 대화 중심으로 진행하는 <strong>IDI는 좌석 배치가 달라 별도 배치도가 필요</strong>합니다(PAGE 33 참고).</span></p></div></div></div></div></section>
+<section class="subpage" id="p08" data-page="p08"><h2>조사 진행 환경 (FGI)</h2><p class="page-subtext">참여자 N명과 진행자·장비 담당자의 좌석을 배치하고, 참여자 그룹별 모습을 촬영할 수 있도록 카메라 3대를 설치합니다.</p><div class="page-cont"><div class="split-layout"><div class="split-image"><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-2.jpeg" alt="FGI 조사실 배치도 — 실측 반영본" loading="lazy"></figure></div></div><div class="split-right"><div class="split-table"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>카메라</th><th>설치 위치</th><th>촬영 방향·대상</th></tr></thead><tbody><tr><td>참여자뷰1</td><td>TV 좌측(좌상단)</td><td>대각선 맞은편의 우측 참여자 열 촬영</td></tr><tr><td>참여자뷰2</td><td>TV 우측(우상단)</td><td>대각선 맞은편의 좌측 참여자 열 촬영</td></tr><tr><td>전경 CCTV</td><td>진행자 뒤쪽 하단</td><td>넓은 화각으로 조사 공간 전반 촬영</td></tr></tbody></table></div></div><div class="split-box"><h4>좌석·마이크</h4><ul class="cont-list"><li>참여자는 테이블 좌우에 <strong>마주 보도록 착석</strong>합니다.</li><li>각 참여자 열 사이에 마이크 2대씩 배치하여 <strong>총 5대의 마이크를 사용</strong>합니다.</li></ul></div></div></div></div></section>
+<section class="subpage" id="p09" data-page="p09"><h2>회의실 예약</h2><p class="page-subtext">실사는 1층(사용자 조사실)과 4층(사용자 관찰실) 두 공간에서 동시에 진행되므로, 진행일이 확정되면 두 공간 모두 회의실 예약 시스템으로 미리 확보합니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">공간 예약</span><p>실사 진행일이 확정되면 <strong>1층(사용자 조사실)과 4층(사용자 관찰실)</strong> 두 공간을 함께 회의실 예약 시스템에 예약합니다.<br><span class="footnote">※ 두 공간에서 동시에 진행되므로, 한 공간만 예약할 경우 다른 직원의 사용 일정과 겹칠 수 있습니다.</span></p></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">사내 공지</span><p>예약이 확정되면 실사 일정을 사내에 미리 공지합니다.<br><span class="footnote">※ 고객사 방문 사실과 프로젝트 관련 대화가 공용 공간에서 노출되지 않도록, 조사와 무관한 직원들이 해당 공간과 일정을 미리 인지하고 피할 수 있게 하기 위함입니다.</span></p><div class="example-box"><h4 class="h4-note">사내 공지 문자 예시</h4><pre class="cont-code"><code>[OO 사용자 조사 일정 안내]
+아래 일정으로 OO 사용자 조사가 진행될 예정입니다.
+
+* 일시: 8월 00일(○) 00:00~00:00
+* 장소: 1층 회의실, 4층 회의실
+
+
+조사 진행 시간 동안 고객사와 참여자가 사무실을 방문할 예정입니다. 프로젝트 및 조사 관련 내용이 공용 공간에서 외부에 노출되지 않도록 대화에 유의해 주시고, 조사와 무관한 직원분들께서는 필요하지 않은 경우 해당 공간의 이용 및 출입을 가급적 피해주시기 바랍니다.
+
+원활한 조사 진행을 위해 협조 부탁드립니다. 감사합니다. 😊</code></pre></div></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">안내문 부착</span><p>실사 당일에는 <strong>조사실·관찰실 출입문 앞과 엘리베이터 앞에 안내문을 부착</strong>해 조사 진행 중임을 다시 한 번 알립니다.</p><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-36.jpg" alt="문 앞 부착용 안내문 예시" loading="lazy"></figure></div></div></li></ol></div></section>
+<h3 class="group-title">장비 세팅</h3>
+<section class="subpage" id="p10" data-page="p10"><h2 class="leaf-pill">조사실 - 영상·오디오 연결</h2><p class="page-subtext">카메라를 HDMI 익스펜더에 연결한 뒤, 각 포트와 4층 사용자 관찰실의 송출 화면이 올바르게 연결되었는지 확인합니다.</p><div class="page-cont"><ol class="cont-steps"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">배치도(PAGE 7~8) 기준으로 카메라와 삼각대를 배치합니다.</span></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">각 카메라에 전원을 연결하고 정상적으로 켜졌는지 확인합니다.</span></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">각 카메라를 송출용 HDMI 익스펜더 1~4번 포트에 연결합니다.</span></div><figure class="cont-fig"><img src="assets/img-3.png" alt="HDMI 익스펜더 이미지 — 전체 포트 연결 상태" loading="lazy"></figure></li><li><span class="step-num">4</span><div class="step-rule"></div><div class="step-text"><span class="step-main">익스펜더 상단의 표시등을 확인합니다.</span><br><span class="step-note">→ 표시등에 초록불이 모두 점등되면 정상적으로 연결된 상태입니다.</span></div><figure class="cont-fig"><img src="assets/img-4.png" alt="익스펜더 상단 표시등 이미지 — 초록불 점등 상태 근접 컷" loading="lazy"></figure></li><li><span class="step-num">5</span><div class="step-rule"></div><div class="step-text"><span class="step-main">모든 연결이 완료되면 배선을 정리하고, 참여자의 이동 동선을 방해하지 않는지 확인합니다.</span><br><ul class="sub"><li>HDMI·전원 케이블 등 노출되는 선은 가능한 한 안보이게 정리합니다.</li><li>노출되는 내부 장비와 배선은 가림막 등을 통해 가려 조사실 전면이 정돈된 상태로 보이도록 합니다.</li></ul></div></li></ol>
+<h4 class="h4-note">포트 매핑 (= 4층 TV 4분할 위치)</h4>
+<div class="quad-grid-row"><div class="quad-grid-item"><div class="quad-case-label">UT Case</div><div class="quad-grid"><div class="quad-cell"><span class="quad-num">1</span><span class="quad-label">참여자뷰 카메라</span></div><div class="quad-cell"><span class="quad-num">2</span><span class="quad-label">전경 CCTV 카메라</span></div><div class="quad-cell"><span class="quad-num">3</span><span class="quad-label">시료 탑뷰 카메라</span></div><div class="quad-cell"><span class="quad-num">4</span><span class="quad-label">시료(모바일)</span></div></div></div><div class="quad-grid-item"><div class="quad-case-label">FGI Case</div><div class="quad-grid"><div class="quad-cell"><span class="quad-num">1</span><span class="quad-label">참여자그룹</span></div><div class="quad-cell"><span class="quad-num">2</span><span class="quad-label">참여자그룹</span></div><div class="quad-cell"><span class="quad-num">3</span><span class="quad-label">전경</span></div><div class="quad-cell"><span class="quad-num">4</span><span class="quad-label">PC</span></div></div></div></div>
+<p><span class="footnote">※ 4번 포트는 조사 상황에 따라 필요 장비를 유연하게 연결합니다(예: 외국인 조사 시 Tiro 번역 화면).</span></p></div></section>
+<section class="subpage" id="p11" data-page="p11"><h2 class="leaf-pill">조사실 - 인물 카메라</h2><p class="page-subtext">4층 사용자 관찰실에 실제로 송출되는 화면을 기준으로 카메라 화각을 최종 조정합니다.</p><p class="page-subtext footnote">※ 설치 카메라 및 저장매체의 상세 정보는 부록 자료를 참고해 주세요.</p><div class="page-cont"><div class="two-col-cards"><div class="two-card"><h4>참여자뷰</h4><p>참여자의 모습과 반응이 충분히 담기도록 참여자 중심 화각 설정</p><ul class="cont-list check-marks"><li>얼굴·주요 표정이 화면에서 가려지지 않는가</li><li>신체가 화면 밖으로 잘리지 않는가</li><li>탑뷰 카메라 거치대 등 주변 장비가 얼굴·표정을 가리지 않는가</li></ul><figure class="cont-fig"><img src="assets/img-5.jpeg" alt="참여자뷰 화각 이미지 — 4층 관찰실 모니터 화면 기준" loading="lazy"></figure></div><div class="two-card"><h4>전경 CCTV</h4><p>참여자·진행자 상호작용을 포함해 <strong>조사 진행 전반을 확인</strong>할 수 있도록 화각 설정</p><ul class="cont-list check-marks"><li>참여자와 진행자의 모습이 모두 화면에 담기는가</li><li>조사와 관련 없는 공간이 불필요하게 노출되지 않는가</li><li>최종 화각을 <strong>4층 사용자 관찰실 모니터 화면 기준</strong>으로 확인했는가</li></ul><figure class="cont-fig"><img src="assets/img-6.jpeg" alt="전경 CCTV 화각 이미지 — 4층 관찰실 모니터 사진 활용 가능" loading="lazy"></figure></div></div></div></section>
+<section class="subpage" id="p12" data-page="p12"><h2 class="leaf-pill">조사실 - 시료 카메라</h2><p class="page-subtext">시료를 조작하는 과정을 안정적으로 촬영할 수 있도록 카메라를 설치하며, 시료를 다루는 범위를 표시해<br>시료가 카메라 화각 밖으로 벗어나는 것을 방지합니다.</p><p class="page-subtext footnote">※ 설치 카메라 및 저장매체의 상세 정보는 부록 자료를 참고해 주세요.</p><div class="page-cont"><div class="two-col-cards"><div class="two-card"><h4>카메라 설치</h4><ul class="cont-bullets"><li><span class="step-main">최대한 높게 설치</span><div class="bullet-desc"><span class="step-note">촬영 영역을 넓게 확보하고, 참여자의 손이나 팔에 시료가 가려지는 상황을 줄일 수 있습니다.</span></div></li><li><span class="step-main">테이블 가장자리 쪽에 설치</span><div class="bullet-desc"><span class="step-note">스탠드가 참여자의 시야와 동선을 방해하지 않도록 하고, 참여자가 스탠드에 부딪혀 화각이 변경되는 것을 방지합니다.</span></div></li></ul><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-7.jpeg" alt="시료 탑뷰 카메라 설치 이미지 — 스탠드 높이·테이블 모서리 관계가 보이는 측면 컷" loading="lazy"></figure></div></div><div class="two-card"><h4>촬영 영역 표시</h4><ul class="cont-bullets"><li><span class="step-main">스탠드 설치를 완료하고 위치를 고정합니다.</span><div class="bullet-desc"><span class="step-note">→ 높이나 위치가 바뀌면 촬영 영역도 달라지므로 반드시 먼저 완료합니다.</span></div></li><li><span class="step-main">탑뷰 카메라 화면을 켜고 실제 화각을 확인하며, 촬영 영역 가이드를 배치합니다.</span></li><li><span class="step-main">가이드의 바깥선을 따라 마스킹 테이프를 부착합니다.</span></li><li><span class="step-main">표시한 촬영 영역이 화각 안에 충분히 들어오는지 확인합니다.</span></li></ul><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-8.png" alt="촬영영역 표시 이미지 — 가이드 배치 + 마스킹테이프 부착 상태" loading="lazy"></figure></div></div></div></div></section>
+<section class="subpage" id="p13" data-page="p13"><h2 class="leaf-pill">조사실 - 무선 마이크</h2><p class="page-subtext">송출용 무선 마이크와 녹화용 핀마이크는 서로 다른 연결 경로를 사용하므로, 각각의 연결과 작동 상태를 확인합니다.</p><p class="page-subtext footnote">※ 추가 확인 필요 — 유선 마이크: FGI 등 조사 유형에 따라 유선 마이크를 사용할 수 있으므로, 실제 사용 여부와 연결 경로를 확인한 뒤 본 가이드에 추가합니다. 사용이 확정될 경우 마이크별 설치 위치와 수음 범위, 믹서 연결 채널까지 함께 표준화합니다.</p><div class="page-cont"><ol class="cont-steps"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">마이크 믹서 전원 및 작동 상태를 확인합니다.</span></div><figure class="cont-fig"><img src="assets/img-9.jpeg" alt="마이크 믹서 이미지" loading="lazy"></figure></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">KANALS 무선 마이크 수신기 전원을 켭니다.</span></div><figure class="cont-fig"><img src="assets/img-10.png" alt="KANALS 무선 마이크 수신기 이미지" loading="lazy"></figure></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">KANALS 무선 마이크 송신기 전원을 켜고 수신기와의 연결 상태를 확인합니다.</span></div><figure class="cont-fig"><img src="assets/img-11.jpeg" alt="KANALS 무선 마이크 송신기 이미지" loading="lazy"></figure></li><li><span class="step-num">4</span><div class="step-rule"></div><div class="step-text"><span class="step-main">DJI Mic Mini 수신기(RX)를 캠코더의 3.5mm 마이크 단자에 연결합니다.</span><br><span class="step-note">→ 캠코더에서 외부 마이크가 정상적으로 인식되는지 확인합니다.</span></div><figure class="cont-fig"><img src="assets/img-12.png" alt="DJI Mic Mini 캠코더 연결 이미지" loading="lazy"></figure></li><li><span class="step-num">5</span><div class="step-rule"></div><div class="step-text"><span class="step-main">DJI Mic Mini 송신기(TX)의 페어링 상태를 확인합니다.</span><br><ul class="sub"><li>완료 신호: 수신기(RX)의 표시등이 모두 초록색으로 점등되면 정상적으로 페어링된 상태입니다.</li><li>연결 문제 발생 시: 송신기와 수신기를 DJI 충전 케이스에 넣었다가 다시 꺼낸 후 연결 상태를 확인합니다.</li><li>다이얼 설정 참고: 수신기 다이얼을 + 방향으로 돌릴수록 주변 소리까지 함께 수음되며, - 방향으로 돌릴수록 마이크 중심으로 수음 범위가 좁아집니다. 일반적인 조사 환경에서는 0(중앙) 위치를 권장합니다.</li></ul></div><figure class="cont-fig"><img src="assets/img-13.png" alt="DJI Mic Mini 페어링 상태 확인 이미지 — 수신기 표시등 초록색 점등" loading="lazy"></figure></li></ol></div></section>
+<section class="subpage" id="p14" data-page="p14"><h2 class="leaf-pill">관찰실</h2><p class="page-subtext">1층 장비 연결이 완료된 후, 4층에서 영상과 음향이 정상적으로 수신되는지 최종 확인합니다.</p><div class="page-cont"><ol class="cont-steps"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">HDMI 1번 포트를 연결합니다</span><br><ul class="sub"><li>기존 1번 포트에 연결된 파란색 케이블을 분리합니다.</li><li>'1번'이라고 표시된 HDMI 케이블을 1번 포트에 연결합니다.</li></ul></div><figure class="cont-fig"><img src="assets/img-14.png" alt="4층 HDMI 포트 이미지" loading="lazy"></figure></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">HDMI 수신부의 연결 상태를 확인합니다.</span><br><ul class="sub"><li>상단 표시등에 초록불이 모두 점등되면 정상적으로 연결된 상태입니다.</li></ul></div><figure class="cont-fig"><img src="assets/img-15.png" alt="HDMI 포트 점등 이미지 — 초록불 점등 상태" loading="lazy"></figure></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">TV 입력을 HDMI 3번으로 설정합니다.</span><br><ul class="sub"><li>각 카메라 화면이 지정된 위치에 정상적으로 송출되는지 확인합니다.</li><li>필요 시 수신부 우측 버튼을 사용해 화면 분할 모드를 변경합니다.</li></ul></div></li><li><span class="step-num">4</span><div class="step-rule"></div><div class="step-text"><span class="step-main">4층 마이크 앰프 전원을 켭니다.</span><br><ul class="sub"><li>스피커를 통해 마이크 음성이 정상적으로 들리는지 확인합니다.</li><li>관찰 환경에 맞게 볼륨을 조절합니다.</li></ul></div><figure class="cont-fig"><img src="assets/img-16.png" alt="마이크 앰프 이미지" loading="lazy"></figure></li></ol>
+<h4 class="h4-note">TV 4분할 레이아웃</h4>
+<div class="quad-grid-row"><div class="quad-grid-item"><div class="quad-case-label">UT Case</div><div class="quad-grid"><div class="quad-cell"><span class="quad-num">1</span><span class="quad-label">참여자뷰 카메라</span></div><div class="quad-cell"><span class="quad-num">2</span><span class="quad-label">전경 CCTV 카메라</span></div><div class="quad-cell"><span class="quad-num">3</span><span class="quad-label">시료 탑뷰 카메라</span></div><div class="quad-cell"><span class="quad-num">4</span><span class="quad-label">시료(모바일)</span></div></div></div><div class="quad-grid-item"><div class="quad-case-label">FGI Case</div><div class="quad-grid"><div class="quad-cell"><span class="quad-num">1</span><span class="quad-label">참여자그룹</span></div><div class="quad-cell"><span class="quad-num">2</span><span class="quad-label">참여자그룹</span></div><div class="quad-cell"><span class="quad-num">3</span><span class="quad-label">전경</span></div><div class="quad-cell"><span class="quad-num">4</span><span class="quad-label">PC</span></div></div></div></div>
+<p><span class="footnote">※ 각 화면에 연결되는 카메라 및 장비는 조사 유형과 진행 방식에 따라 다르게 구성할 수 있습니다.  _(e.g. 외국인 조사 시 4번 포트에 Tiro 실시간 번역 화면 연결)_</span></p></div></section>
+<section class="subpage" id="p15" data-page="p15"><h2 class="leaf-pill">장비 체크리스트</h2><div class="page-cont"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>구분</th><th>확인 대상</th><th>확인 신호</th></tr></thead><tbody><tr><td>1층 · 영상</td><td>HDMI 익스펜더</td><td>표시등이 모두 초록색으로 점등</td></tr><tr><td>1층 · 음향</td><td>KANALYS 무선 마이크 / DJI Mic Mini 수신기</td><td>연결 및 페어링 상태 정상</td></tr><tr><td>1층 · 탑뷰</td><td>촬영 영역</td><td>표시한 촬영 영역 전체가 화면 안에 포함</td></tr><tr><td>1층 · 정돈</td><td>배선·가림막</td><td>참여자 동선을 방해하지 않고, 정리된 조사 환경</td></tr><tr><td>4층 · 수신</td><td>HDMI 수신부</td><td>표시등이 모두 초록색으로 점등</td></tr><tr><td>4층 · 화면</td><td>TV 및 4분할 화면</td><td>각 화면이 지정된 위치에 정상 송출</td></tr><tr><td>4층 · 음향</td><td>앰프 및 스피커</td><td>마이크 음성이 정상적으로 출력</td></tr><tr><td>공통 · 화각</td><td>실제 송출 화면</td><td>조사 분석에 필요한 대상과 행동이 화면에 모두 확인됨</td></tr></tbody></table></div>
+<p><span class="footnote">※ <strong>세팅 완료 기준:</strong> 1층 장비가 정상적으로 연결되었고, 4층에서 모든 영상·음향이 실제로 정상 수신되는 것을 확인한 경우에만 세팅을 완료합니다.</span></p></div></section>
+<section class="part-hero" id="p16" data-page="p16"><div class="part-kicker">III</div><h1 class="part-title">조사 진행</h1><div class="part-intro"><p>조사 현장에서 필요한 인력의 역할과 배치부터, 세션 전·중·후 반드시 확인해야 할 운영 항목, 촬영 영상을 스크립트로 정리하는 방법까지 단계별로 안내합니다.</p></div></section>
+<section class="subpage" id="p17" data-page="p17"><h2>조사인력 구성 및 역할</h2><p class="page-subtext">기본 운영 인력은 5명이며, 1층 사용자 조사실 2명 / 4층 사용자 관찰실 2명 / 참여자 동선 관리 1명으로 구성합니다.</p><div class="page-cont"><div class="table-note-layout"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>역할</th><th>위치</th><th>주요 업무</th></tr></thead><tbody><tr><td><strong>진행자(모더레이터)</strong></td><td>1층 조사실</td><td>질문·심층 탐색·시간 관리, 라포 형성, 오프닝·클로징</td></tr><tr><td><strong>보조 진행자</strong></td><td>4층 관찰실</td><td>누락 질문 확인, 진행 시간 관리, 고객사 추가 질문 취합·전달</td></tr><tr><td><strong>장비 담당자</strong></td><td>1층 조사실</td><td>장비·녹화·송출 관리, 마이크 착용 안내, 장비 이상 대응</td></tr><tr><td><strong>에스코트 담당자</strong></td><td>층간 이동 동선</td><td>참여자 입·퇴실 안내 및 인솔, 사례비·서류 처리, 동선 관리<br><span class="footnote">4명일 경우 노트테이킹 담당자 역할 함께 수행</span></td></tr><tr><td><strong>노트테이킹 담당자</strong></td><td>4층 관찰실</td><td>발언·행동 기록, 영상·음향 상태 확인 및 이상 공유<br><span class="footnote">4명일 경우 에스코트 담당자 역할 함께 수행</span></td></tr></tbody></table></div><div class="split-box"><h4>5명의 구성이 어려운 경우</h4><p>VC-4(에스코트 담당자)와 VC-5(노트테이킹 담당자)를 1인이 겸임합니다.</p><ul class="cont-list"><li>참여자 인솔을 마친 후 → 4층에서 노트테이킹 수행</li><li>세션 종료 시 → 1층으로 이동해 참여자 퇴실 안내</li><li>인솔로 4층 자리를 비우는 동안 → VC-3이 송출 상태 확인을 대신 담당</li><li>고객사 참관 시에는 인솔 및 동선 관리 부담이 커지므로 가급적 5명 운영 권장</li></ul><h4>동선 관리 원칙</h4><p>고객사 참관자가 있는 경우, 참여자와 고객사의 동선이 겹치지 않도록 사전에 이동 경로를 분리합니다. 또한 고객사 방문 사실과 프로젝트 관련 대화가 공용 공간에서 노출되지 않도록 조사 전 사내에 미리 안내합니다.</p></div></div></div></section>
+<section class="subpage" id="p18" data-page="p18"><h2>역할별 핵심 업무</h2><p class="page-subtext">세션의 시작부터 종료까지 확인해야 할 항목을 단계별로 나누고, 각 항목의 담당자를 명확하게 지정합니다.</p><div class="page-cont"><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>구간</th><th>점검 항목</th><th>담당</th></tr></thead><tbody><tr><td><strong>시작 전</strong></td><td>장비 배터리 잔량 및 저장 공간 확인</td><td>장비담당자</td></tr><tr><td></td><td>참여자 마이크 착용 보조 및 전원 상태 확인</td><td>장비담당자</td></tr><tr><td></td><td>영상·음향이 4층에 정상 송출되는지 확인</td><td>장비담당자 · 보조진행자</td></tr><tr><td></td><td>실제 송출 화면 기준으로 카메라 화각 최종 확인</td><td>장비담당자</td></tr><tr><td><strong>진행 시작</strong></td><td>녹화 시작 후 녹화 시작 시점 구두로 공유 (e.g. 녹화 버튼 ON → "○○카메라 녹화 시작하겠습니다")</td><td>장비담당자</td></tr><tr><td></td><td>녹화가 정상적으로 시작되었는지 확인(오류 시 즉시 공유)</td><td>보조진행자</td></tr><tr><td><strong>진행 중</strong></td><td>카메라·녹화 음향 장비 이상 여부 확인</td><td>장비담당자</td></tr><tr><td></td><td>영상·음향 송출 상태 확인</td><td>노트테이킹 담당자</td></tr><tr><td></td><td>조사 흐름을 확인하며 누락된 질문 점검</td><td>보조진행자</td></tr><tr><td><strong>종료</strong></td><td>녹화 종료 및 저장 상태 확인</td><td>장비담당자</td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p19" data-page="p19"><h2>마이크 착용 및 음향 확인</h2><p class="page-subtext">마이크의 위치와 방향이 조금만 달라져도 음량과 수음 품질이 크게 달라질 수 있으므로, 착용 후 반드시<br>실제 송출 음향까지 확인합니다.</p><p class="page-subtext footnote">※ 착용 원칙: 송출용 무선 마이크(KANALS)는 수음 방향과 위치에 따라 4층으로 전달되는 음향 품질이 크게 달라질 수 있습니다. 따라서 참여자가 직접 착용하기보다 '장비 담당자'가 위치와 방향을 확인하며 착용을 안내합니다.</p><div class="page-cont"><h4>착용 시 체크 포인트</h4>
+<ul class="cont-checklist"><li class="check"><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>마이크 헤드가 입 방향을 향하는가 (아래·옆·바깥 향하지 않는가)</li><li class="check"><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>옷깃·머플러·머리카락·명찰 등에 수음부가 가려지지 않는가</li><li class="check"><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>착용 높이·거리가 참여자마다 크게 다르지 않은가 (세션 간 음량 편차 방지)</li><li class="check"><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>4층 스피커를 통해 관찰실에서 음성이 실제로 명확하게 들리는가</li></ul>
+<div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-17.jpeg" alt="마이크 착용샷 이미지 — 올바른 착용(입 방향) 정면 / 잘못된 착용(방향 반대·옷깃에 가림) 비교 컷 포함" loading="lazy"></figure></div></div></section>
+<section class="subpage" id="p20" data-page="p20"><h2>실시간 자동 번역 (외국인)</h2><p class="page-subtext">외국인 대상 인터뷰는 외국어 진행이 가능한 진행자를 기본으로 하며, Tiro를 활용해 4층 관찰실에<br>실시간 번역 내용을 공유합니다.</p><p class="page-subtext footnote">※ Tiro 번역 시작 및 화면 송출은 '장비 담당자'가 담당합니다. (녹화 시작 후 Tiro 실시간 번역을 시작)</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">기본 설정 (모든 외국어 세션 공통)</span><ul class="cont-bullets cont-numbered"><li><span class="num-marker">1.</span><span class="step-main">Tiro 데스크톱 앱을 실행하고 VinylC 리서치 계정으로 로그인합니다.</span></li><li><span class="num-marker">2.</span><span class="step-main">설정 > 기본설정에서 아래 항목을 활성화합니다.</span><div class="bullet-desc"><ul class="sub"><li>대화 자동 감지</li><li>실시간 기록 표시</li><li>음성 파일 로컬 저장</li></ul></div></li><li><span class="num-marker">3.</span><span class="step-main">Tiro가 실행된 맥북을 HDMI 4번 포트에 연결합니다.</span></li><li><span class="num-marker">4.</span><span class="step-main">4층 관찰실에서 Tiro 번역 화면이 정상적으로 송출되는지 확인합니다.</span></li></ul><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-18.png" alt="Tiro 설정 화면 이미지 — 기본설정 항목 활성화 화면" loading="lazy"></figure></div></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">실시간 번역 큰 글씨 모드</span><ul class="cont-bullets cont-numbered"><li><span class="num-marker">1.</span><span class="step-main">대화 언어를 '다국어'로, 기록 언어를 '한국어'로 설정합니다.</span></li><li><span class="num-marker">2.</span><span class="step-main">번역 기능이 활성화되어 있는지 확인합니다.</span></li><li><span class="num-marker">3.</span><span class="step-main">참관자가 번역 내용을 쉽게 확인할 수 있도록 컨퍼런스 모드를 활성화합니다.</span></li></ul><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-19.png" alt="Tiro 실시간 녹음 화면 — 다국어/한국어 설정 및 번역 기능 활성화 표시" loading="lazy"></figure></div></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">오류 발생 시</span><p>실시간 번역이 정상적으로 표시되지 않을 경우:<br>'일시정지' → '재생' 버튼을 순서대로 눌러 번역을 다시 시작합니다.</p><div class="cont-img-solo"><figure class="cont-fig"><img src="assets/img-20.png" alt="컨퍼런스 모드 — 일시정지·재생 버튼 표시 이미지" loading="lazy"></figure></div></div></li></ol></div></section>
+<section class="subpage" id="p21" data-page="p21"><h2>스크립트 정리 방법</h2><p class="page-subtext">촬영이 끝난 영상에서 음성을 추출하고, 이를 텍스트 스크립트로 변환하는 절차를 안내합니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">영상 파일 추출</span><ul class="cont-bullets cont-numbered"><li><span class="num-marker">1.</span><span class="step-main">카메라의 SD카드를 PC에 연결해 영상 파일을 확인합니다.</span><div class="bullet-desc"><ul class="sub"><li>시료 카메라 영상은 AVCHD 규격으로 저장되어 있어, 일반 폴더처럼 바로 영상 파일이 보이지 않을 수 있습니다.</li><li>보이지 않을 경우, SD카드에서 AVCHD 폴더 펼쳐보기를 선택 > BDMV 폴더 펼쳐보기를 선택 > STREAM 폴더 안에서 실제 영상 파일을 확인하고 복사합니다.</li></ul></div></li></ul></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">음성 파일 추출 (Mac 기준)</span><ul class="cont-bullets cont-numbered"><li><span class="num-marker">1.</span><span class="step-main">추출한 영상 파일을 QuickTime Player로 엽니다.</span><div class="bullet-desc"><span class="step-note"><span style="font-size:16px;font-weight:500;color:var(--text);">Mac이 아닌 Windows의 경우, 반디컷(Bandicut)을 이용하면 음성 파일 추출이 가능합니다.</span></span></div></li><li><span class="num-marker">2.</span><span class="step-main">상단 메뉴에서 파일 > 다음으로 내보내기 > 오디오 전용을 선택합니다.</span></li><li><span class="num-marker">3.</span><span class="step-main">영상에서 음성만 분리된 파일이 저장됩니다.</span></li></ul></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">스크립트(STT) 변환</span><ul class="cont-bullets cont-numbered"><li><span class="num-marker">1.</span><span class="step-main">추출한 음성 파일을 Tiro에 업로드해 텍스트 스크립트로 변환합니다.</span><div class="bullet-desc"><span class="step-note">→ 핀마이크 없는 조건에서 자체 비교한 결과 Tiro(오류율 5.96%)가 클로바노트(오류율 8.98%)보다 인식 정확도가 더 높게 나와, 스크립트 변환 도구로 Tiro를 사용합니다. [STT_정확도평가 참조]</span></div></li><li><span class="num-marker">2.</span><span class="step-main">변환된 스크립트를 검토하고 필요한 부분을 보정합니다.</span></li></ul></div></li></ol></div></section>
+<section class="part-hero" id="p22" data-page="p22"><div class="part-kicker">IV</div><h1 class="part-title">부록</h1><div class="part-intro"><p>본문에서 다루지 않은 장비 정보와 운영 참고 사항을 정리했습니다. 조사 진행에 반드시 필요한 내용은 아니지만,<br>장비를 확인하거나 운영 방식을 검토할 때 참고할 수 있습니다.</p></div></section>
+<section class="subpage" id="p23" data-page="p23"><h2>영상·음향 신호 송출흐름도</h2><div class="page-cont"><h4>전체구조</h4><div class="flow-diagram"><div class="flow-stage"><div class="flow-node" aria-hidden="true"></div><div class="flow-stage-label">1층 · 촬영·녹음</div><ul class="flow-stage-items"><li>카메라 3대 (참여자뷰·시료탑뷰·전경CCTV)</li><li>마이크 7대 (유선5+무선2)</li></ul></div><div class="flow-stage"><div class="flow-node" aria-hidden="true"></div><div class="flow-stage-label">장거리 전송</div><ul class="flow-stage-items"><li>영상: HDMI over Cat5 (익스텐더)</li><li>음향: XLR 아날로그 직결</li></ul></div><div class="flow-stage"><div class="flow-node" aria-hidden="true"></div><div class="flow-stage-label">4층 · 관찰·청취</div><ul class="flow-stage-items"><li>멀티뷰 TV (3~4분할)</li><li>앰프 + 별도 스피커</li></ul></div></div><div class="table-box"><h4 class="h4-note">영상 트랙</h4><p class="flow-track-text">캠코더 3대 → (HDMI) → ATEN 익스텐더(VE812T, 1층 송신) → (Cat5) → ATEN 수신기(4층) → (HDMI) → 4x1 멀티뷰어 → (HDMI③) → TV</p></div><div class="table-box"><h4 class="h4-note">음향 트랙</h4><p class="flow-track-text">유선5+무선2 마이크 → (XLR/RF) → ML620e 믹서(하단 유닛) → (XLR 장거리) → KANALS 앰프(4층, MASTER CH1/2) → (Speaker) → 스피커</p><p class="footnote">※ 여유 채널 있음 — ML620e 믹서의 일부 채널은 현재 사용하지 않고 있어, 필요 시 추가 마이크 연결을 검토할 수 있습니다.</p></div></div></section>
+<section class="subpage" id="p24" data-page="p24"><h2>주요 장비 사양 정보</h2><div class="page-cont"><div class="spec-grid"><div class="spec-card"><img src="assets/img-21.jpeg" alt="참여자뷰 카메라(Panasonic HC-VXF1) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">참여자뷰 카메라</div><div class="spec-name">Panasonic HC-VXF1</div><div class="spec-desc">4K, Leica Dicomar 24x, F1.8</div></div></div><div class="spec-card"><img src="assets/img-22.jpeg" alt="시료 탑뷰 카메라(Sony HDR-XR150) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">시료 탑뷰 카메라</div><div class="spec-name">Sony HDR-XR150</div><div class="spec-desc">Full HD 1080, AVCHD, 내장 HDD 120GB</div></div></div><div class="spec-card"><img src="assets/img-23.jpeg" alt="전경 CCTV(Sony SRG-XP1) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">전경 CCTV</div><div class="spec-name">Sony SRG-XP1</div><div class="spec-desc">PoE 전원(IEEE802.3af)</div></div></div><div class="spec-card"><img src="assets/img-24.jpeg" alt="믹서(mpa ML620e) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">믹서</div><div class="spec-name">mpa ML620e</div><div class="spec-desc">6채널 × 2유닛 스택, 채널별 0V/12V/48V 팬텀파워 개별 스위치(콘덴서 마이크 사용 가능)</div></div></div><div class="spec-card"><img src="assets/img-25.jpeg" alt="HDMI 익스텐더(ATEN VE812T) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">HDMI 익스텐더</div><div class="spec-name">ATEN VanCryst VE812T ×4</div><div class="spec-desc">HDMI over Cat5, 4포트, 1:1 연결</div></div></div><div class="spec-card"><img src="assets/img-26.jpeg" alt="멀티뷰어(HDMI 4x1 Quad Multi-Viewer) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">멀티뷰어</div><div class="spec-name">HDMI 4x1 Quad Multi-Viewer</div><div class="spec-desc">Seamless Switcher, 4K@30Hz</div></div></div><div class="spec-card"><img src="assets/img-27.jpeg" alt="4층 앰프(KANALS USB Player &amp; Multi Out Power Amplifier) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">4층 앰프</div><div class="spec-name">KANALS USB Player & Multi Out Power Amplifier</div><div class="spec-desc">MASTER CH1/2</div></div></div><div class="spec-card"><img src="assets/img-28.jpeg" alt="무선마이크 송신기(KANALS UHF PLL BodyPack) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">무선마이크 송신기</div><div class="spec-name">KANALS UHF PLL BodyPack</div><div class="spec-desc">참가자 931.975MHz / 진행자 925.525MHz</div></div></div><div class="spec-card"><img src="assets/img-29.jpeg" alt="무선마이크 수신기(KANALS UHF PLL Diversity) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">무선마이크 수신기</div><div class="spec-name">KANALS UHF PLL Diversity ×2</div><div class="spec-desc">"UT ROOM-1"=참가자용, "UT ROOM-2"=진행자용 (라벨은 기기식별용)</div></div></div></div></div></section>
+<section class="subpage" id="p25" data-page="p25"><h2>저장매체 정보</h2><div class="page-cont"><div class="spec-grid"><div class="spec-card"><img src="assets/img-30.jpeg" alt="Lexar Professional SDXC 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">Lexar Professional SDXC</div><div class="spec-name">256GB, UHS-I U3, 95MB/s</div><div class="spec-desc"><strong>참여자뷰 카메라 권장</strong> — 90분 약 20GB, 고용량·고비트레이트 대응</div></div></div><div class="spec-card"><img src="assets/img-31.jpeg" alt="SanDisk Ultra 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">SanDisk Ultra</div><div class="spec-name">128GB, Class10, 48MB/s</div><div class="spec-desc"><strong>시료탑뷰 카메라 권장</strong> — 90분 약 4.5GB로 충분(내장 HDD 120GB는 보조용)</div></div></div><div class="spec-card"><img src="assets/img-32.jpeg" alt="Samsung EVO(+어댑터) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">Samsung EVO(+어댑터)</div><div class="spec-name">microSDXC 128GB, U1</div><div class="spec-desc">공용 예비 카드(두 카메라 겸용 가능)</div></div></div><div class="spec-card"><img src="assets/img-33.jpeg" alt="SanDisk SDHC 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">SanDisk SDHC</div><div class="spec-name">32GB, Class4</div><div class="spec-desc">구형 저속 규격 — 실사용 비권장, 재고 보관용</div></div></div><div class="spec-card"><img src="assets/img-34.jpeg" alt="ADATA(+어댑터) 이미지" loading="lazy"><div class="spec-card-body"><div class="spec-cat">ADATA(+어댑터)</div><div class="spec-name">64GB, A1/V10/U1</div><div class="spec-desc">용도 미상, 불량 의심 메모 — <strong>사용 보류</strong></div></div></div></div></div></section>
+<section class="subpage" id="p26" data-page="p26"><h2>참여자 컨택 - 사전 프로세스</h2><p class="page-subtext">1차 컨택을 위한 스크립트 작성부터 전화 컨택, 참여 확정 문자 발송까지 조사 전 진행하는 컨택 절차입니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">컨택가이드(전화 스크립트) 작성</span><p>반드시 확인해야 하는 스크리닝 질문을 확인하여 스크립트에 반영합니다.</p><div class="example-box"><h4 class="h4-note">컨택가이드 예시</h4><pre class="cont-code"><code>안녕하세요, 000님 되시나요? [조사명] 참여 신청해주셔서 참여 안내 때문에 전화드렸습니다.  
+저희는 UX 전문 에이전시 [바이널씨]입니다.  
+
+Q1. 0월 00일 00시 부터 00시까지 여의도 더현대 인근에서 진행하는 [조사명]에 참여 가능하실까요?  
+1)예 (→Q2로 이동)  
+2)아니오 → 그날 일정이 아예 안되는 걸까요? 아니면 날짜를 바꾸면 가능할까요?  (일정 확인 후) 다른 분들의 일정도 확인이 필요해서요. 다시 알아보고 연락 드리겠습니다. (통화 종료)  
+
+Q2. 참여 신청하실 때 적어 주셨지만 한 번 더 여쭤보려고 해요. 혹시 마케팅/시장조사/언론/UX/금융 분야에 종사하고 계실까요?  
+1) 예 → 답변 감사합니다. 저희가 직업 관련해서 한번 확인이 필요해서, 확인 후 다시 연락 드리겠습니다.  
+2) 아니오 (→Q3으로 이동)  
+
+Q3. 답변 감사합니다. 참석 당일 10분 전에 도착해 주셔야 하고, 신분증이 확인되어야 건물 출입이 가능하니 신분증 꼭 필참해 주세요.  지금 안내 드린 사항은 한 번 더 문자로 보내 드릴 예정입니다. 참여해 주셔서 감사합니다.</code></pre></div></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">전화 컨택</span><p>선정된 참여자에게 1차 컨택은 전화를 기본으로 합니다.<br><span class="footnote">*문자 연락도 무방하나, 회신이 오래 걸리거나 응답이 오지 않는 경우가 자주 발생</span><br><span class="footnote">*  전화 연결이 되지 않을 경우 문자로 통화 가능한 일정을 확인 후 다시 전화 연결</span></p><ul class="sub"><li>일정/조건 등의 이유로 참여가 확정되지 않은 경우 예비 참여자에게 컨택</li></ul></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">확정 문자 전송</span><p>참여 여부가 확정된 참여자에게 정확한 조사 일시/장소/사례비등을 문자로 상세히 안내합니다.</p><ul class="sub"><li>참여 조건에 문제가 없고, 참여 여부가 확정된 참여자에게 전송<br>(참여자들이 기다리는 경우가 많기 때문에 가급적 확정된 즉시 전송)</li><li>아이폰으로 단체 메시지 전송 시 단톡방으로 생성됨 (신분증, 통장 사본 요청 등 개인정보 관련 내용일 경우 개별 메시지로 발송)</li></ul><div class="example-box"><h4 class="h4-note">확정 문자 예시</h4><pre class="cont-code"><code>안녕하세요, [조사 대상자 이름]님! 이번 대면 좌담회 관련 공지사항을 다시 한 번 안내드리며, 참여 확정 문자를 보내드립니다.  
+
+[인터뷰 세부 사항]  
+일정: M/D(요일) 오후/오전 N시  
+장소: 바이널씨(서울 강남구 논현로 142길 32)
+예상 소요 시간: 약 N분  
+준비물: 신분증 지참 (필수)  
+사례금: N만원  
+
+참고 사항:  
+인터뷰 시작 10분 전까지 바이널씨 P층 주차장 앞으로 도착해 주셔야 합니다.  
+도착하신 후 이 번호로 연락 주시기 바랍니다.  
+신분증을 지참하지 않으면 건물 입장이 불가하오니, 반드시 신분증을 지참해 주시기 바랍니다.  
+
+추가로 궁금한 점이 있으시면 언제든지 문의 주세요. 감사합니다 😊</code></pre></div></div></li></ol></div></section>
+<section class="subpage" id="p27" data-page="p27"><h2>참여자 컨택 - 당일/조사후 프로세스</h2><p class="page-subtext">조사 당일 리마인딩부터 사례비 지급을 위한 서류 수령, 개인정보 전달·삭제까지 조사 후 마무리하는 절차입니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">4</span><div class="step-rule"></div><div class="step-text"><span class="step-main">리마인딩 문자 전송 (조사 당일)</span><p>참여자가 조사 일정을 잊지 않도록 리마인딩하고, 참여 여부를 다시 한번 묻는 목적의 문자를 전송합니다.</p><ul class="sub"><li>조사가 오전에 이루어질 경우 전날, 오후에 이루어질 경우 당일 오전에 전송</li><li>노쇼/지각이 발생할 경우 즉시 공유</li></ul><div class="example-box"><h4 class="h4-note">리마인딩 문자 예시</h4><pre class="cont-code"><code>안녕하세요, [조사 대상자 이름]님! 오늘 진행되는 [조사명] 좌담회에 대한 리마인딩 문자 드립니다.  
+참여 가능하신 경우 간단한 회신 부탁드립니다.  
+
+[인터뷰 세부 사항]  
+일정: M/D(요일) 오후/오전 N시  
+장소: 바이널씨(서울 강남구 논현로 142길 32) 
+예상 소요 시간: 약 90분  
+준비물: 신분증 지참 (필수)  
+사례금: 7만원  
+
+참고 사항:  
+인터뷰 시작 10분 전까지 바이널씨 P층 주차장 앞으로 도착해 주셔야 합니다.   
+도착하신 후 이 번호로 연락 주시기 바랍니다.  
+신분증을 지참하지 않으면 건물 입장이 불가하오니, 반드시 신분증을 지참해 주시기 바랍니다.  
+
+추가로 궁금한 점이 있으시면 언제든지 문의 주세요. 감사합니다 😊</code></pre></div></div></li><li><span class="step-num">5</span><div class="step-rule"></div><div class="step-text"><span class="step-main">사례비 안내문자 발송 (조사 종료 당일 혹은 익일 전송)</span><p>사례비 입금을 위해서는 신분증 사본&통장 사본을 참여자에게 전송받아야 하기 때문에  이에 대한 안내를 문자로 전송합니다.</p><div class="example-box"><h4 class="h4-note">사례비 안내 문자 예시</h4><pre class="cont-code"><code>안녕하세요, [조사 대상자 이름]님!  
+오늘 진행된 [조사명] 좌담회에 참여해 주셔서 진심으로 감사드립니다.  
+
+사례금 지급을 위해 신분증 사본과 통장 사본을 [M/D(요일)] 까지  
+이 번호로 문자로 제출해 주셔야 합니다.  
+제출된 서류는 확인 후 바로 삭제 처리됩니다.  
+
+추가로 궁금한 사항이 있으시면 언제든지 연락 주세요.  
+조사에 적극 참여해 주셔서 다시 한 번 감사드립니다.  
+오늘 하루 좋은 하루 되세요! 😊</code></pre></div></div></li><li><span class="step-num">6</span><div class="step-rule"></div><div class="step-text"><span class="step-main">신분증, 통장 사본&동의서 전달</span><p>문자로 전달받은 신분증/통장 사본과 조사 진행 전 서명 받은 동의서를 PM에게 전달합니다.</p><ul class="sub"><li>사례비 지급 이후 신분증/통장 사본 이미지 삭제 (갤러리, 문자, 구글드라이브 등)</li></ul><pre class="cont-code"><code>[개인정보 수집·이용 동의서, 비밀유지 서약서, 사례비 지급을 위한 개인정보 활용 동의서] 
+→ PM에게 전달 
+
+[신분증/통장 사본] 
+→ 신분증/통장 사본은 구글 드라이브에 &#x27;신분증/통장사본&#x27;폴더를 만들어 링크로 PM에게 전달 
+(이미지 정리 시 &#x27;참여자 이름_신분증&#x27;, &#x27;참여자 이름_통장사본&#x27; 규칙으로 정리하면 보기 편함)</code></pre></div></li></ol></div></section>
+<section class="subpage" id="p28" data-page="p28"><h2>동의서 양식 - 내국인</h2><p class="page-subtext">참여자는 조사 시작 전 개인정보 수집·이용 동의서, 비밀유지 서약서 및 사례비 지급 관련 동의서를 작성합니다. 조사 진행 전 참여자의 동의서 작성 여부와 서명 완료 여부를 반드시 확인합니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">개인정보 수집·이용 동의서</span><p>조사 진행에 필요한 개인정보의 수집·이용 목적과 범위를 사전에 안내하고, 이에 대한 참여자의 동의를 받기 위한 서류입니다.</p><div class="example-box"><h4 class="h4-note">개인정보 수집·이용 동의서 양식</h4><pre class="cont-code"><code>개인정보 수집·이용 동의서
+
+「개인정보보호법」 등 관련 법규에 의거하여 (주)바이널씨는 귀하의 개인정보 수집 및 이용에 대해 개인정보 수집·이용 동의서를 받고 있습니다.
+
+개인정보 제공자가 동의한 내용 외의 다른 목적으로 활용하지 않으며, 제공된 개인정보의 이용을 거부하고자 할 때에는 개인정보 관리책임자를 통해 열람, 정정 혹은 삭제를 요구할 수 있습니다.
+
+※ 제공된 개인정보는 (주)바이널씨의 아래 항목에 제한된 범위에서만 활용됩니다.
+
+
+정보활용목적
+
+1. 참여자의 개인정보와 녹음·영상 자료는 리서치 분석 및 보고서 작성 등 프로젝트 관련 산출물 작성을 위한 용도로 활용됩니다.
+2. 보존기간은 동의일로부터 수집이용 목적달성 시까지 또는 참여자의 동의 철회 시까지 입니다.
+3. 그 외의 용도로 활용할 경우는 반드시 참여자의 허락과 동의를 받겠습니다.
+
+[제3자 정보제공 동의]
+– 촬영된 녹음·영상 데이터는 리서치를 의뢰한 수탁자에게 제공됩니다.
+– 수탁자 : [고객사명]
+
+---
+
+「개인정보보호법」 제15조 법규에 의거하여 상기 본인은 위와 같이 개인정보 수집 및 활용에 동의함.
+
+2027년      월      일
+
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">비밀유지서약서</span><p>조사 과정에서 접하게 되는 고객사 및 프로젝트 관련 정보를 외부에 공개하거나 조사 목적 외로 사용하지 않도록 참여자의 비밀유지 의무를 확인하기 위한 서류입니다.</p><div class="example-box"><h4 class="h4-note">비밀유지서약서 양식</h4><pre class="cont-code"><code>비밀유지서약서
+
+본인은 2027년 ○○월 ○○일에 (주)바이널씨가 주관하는 [조사명] 프로젝트(이하 &#x27;프로젝트&#x27;라 함)와 관련된 사용자 조사에 참여함에 있어, 모든 정보가 영업 비밀 및 중요한 영업 자산임을 인지하고 충분히 설명을 듣고 그 내용을 이해하였기에, 다음 사항을 준수할 것을 서약합니다.
+
+1. 본 서약서에서 &quot;비밀정보&quot;라 함은 귀하가 프로젝트 참여 과정에서 인지하거나 접하는 모든 정보, 자료 데이터, 기술적 정보, 상업적 정보 및 기타 모든 형태의 정보를 포함하며, 이는 구두, 서면, 전자적 형태를 불문하고 포함됩니다.
+2. 본인은 프로젝트와 관련된 어떠한 정보도 회사의 사전 서면 동의 없이는 어떠한 방법으로도 경쟁업체나 제3자에게 제공하거나 누설하지 않으며, 부정한 목적으로도 공개하거나 사용하지 않을 것을 서약합니다.
+3. 본인은 프로젝트에 관한 모든 기밀 정보를 보호하기 위해 최선을 다할 것이며, 인터뷰 종료 후에도 이러한 의무는 계속 유지됨을 이해하고 동의합니다.
+
+---
+
+본인은 위의 내용을 충분히 이해하고 동의하며, 서약 내용을 위반할 경우 관련 법규에 의한 민·형사상 책임을 감수할 것을 서약합니다.
+
+2027년      월      일
+
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">사례비 지급을 위한 개인정보 활용 동의서</span><p>조사 참여에 대한 사례비를 지급하는 데 필요한 정보를 수집하고, 지급 절차에 대한 참여자의 동의를 받기 위한 서류입니다.</p><div class="example-box"><h4 class="h4-note">사례비 지급을 위한 개인정보 활용 동의서 양식</h4><pre class="cont-code"><code>사례비 지급을 위한 개인정보 활용 동의서
+
+
+개인정보 내용 : 신분증 사본, 참여자 명의 통장 사본
+정보 활용     : 상기 참여자의 개인정보는 사례비 지급 및 영수를 위한 목적으로만 사용됩니다.
+지급 내용     : 조사 참여로 인한 사례비 지급
+                – 사례비 : 00,000원
+                – 수급된 참여자 명의의 통장으로 조사 완료 후 2주 이내 입금
+
+---
+
+참가자 본인은 상기 개인정보 활용과 관련된 사항을 확인하였으며, 정보 활용 및 지급 내용에 동의함을 날인하여 확인합니다.
+
+2027년      월      일
+
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li></ol></div></section>
+<section class="subpage" id="p29" data-page="p29"><h2>동의서 양식 - 외국인(참여자)</h2><p class="page-subtext">외국인 참여자는 내국인 참여자와 동의서 양식 및 작성 항목이 다르므로, 외국인 참여자용 별도 양식을 사용합니다. 조사 시작 전에는 통역사가 동석해 동의서 내용을 참여자의 모국어로 통역하고, 통역 확인 서명을 남깁니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">개인정보 수집·이용 동의서</span><p>내국인 양식과 동일한 수집·이용 항목에 통역사 동석 안내와 통역 확인 서명란을 추가한 외국인 참여자용 서류입니다.</p><div class="example-box"><h4 class="h4-note">개인정보 수집·이용 동의서 양식</h4><pre class="cont-code"><code>개인정보 수집·이용 동의서
+
+「개인정보보호법」 등 관련 법규에 의거하여 (주)바이널씨는 귀하의 개인정보 수집 및 이용에 대해 개인정보 수집·이용 동의서를 받고 있습니다.
+
+개인정보 제공자가 동의한 내용 외의 다른 목적으로 활용하지 않으며, 제공된 개인정보의 이용을 거부하고자 할 때에는 개인정보 관리책임자를 통해 열람, 정정 혹은 삭제를 요구할 수 있습니다.
+
+※ 제공된 개인정보는 (주)바이널씨의 아래 항목에 제한된 범위에서만 활용됩니다.
+
+
+정보활용목적
+
+1. 참여자의 개인정보와 녹음·영상 자료는 리서치 분석 및 보고서 작성 등 프로젝트 관련 산출물 작성을 위한 용도로 활용됩니다.
+2. 보존기간은 동의일로부터 수집이용 목적달성 시까지 또는 참여자의 동의 철회 시까지 입니다.
+3. 그 외의 용도로 활용할 경우는 반드시 참여자의 허락과 동의를 받겠습니다.
+
+[제3자 정보제공 동의]
+– 촬영된 녹음·영상 데이터는 리서치를 의뢰한 수탁자에게 제공됩니다.
+– 수탁자 : [고객사명]
+
+---
+
+「개인정보보호법」 제15조 법규에 의거하여 상기 본인은 위와 같이 개인정보 수집 및 활용에 동의함.
+
+
+통역사 동석
+통역사(소속 : ____________ )가 동석하여 통역합니다. 통역사는 비밀유지 및 개인정보 취급에 관한 서약을 하였으며, 통역 업무 외의 목적으로 참여자의 정보를 사용하지 않습니다.
+
+통역확인 : 위 내용을 참여자의 모국어로 정확히 통역하였습니다.
+통역사 성명 : ____________         (날인/사인)
+
+2027년      월      일
+
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">비밀유지서약서</span><p>내국인 양식과 동일한 서약 내용에 통역 확인 서명란을 추가한 외국인 참여자용 서류입니다.</p><div class="example-box"><h4 class="h4-note">비밀유지서약서 양식</h4><pre class="cont-code"><code>비밀유지서약서
+
+본인은 2027년 ○○월 ○○일에 (주)바이널씨가 주관하는 [조사명] 프로젝트(이하 &#x27;프로젝트&#x27;라 함)와 관련된 사용자 조사에 참여함에 있어, 모든 정보가 영업 비밀 및 중요한 영업 자산임을 인지하고 충분히 설명을 듣고 그 내용을 이해하였기에, 다음 사항을 준수할 것을 서약합니다.
+
+1. 본 서약서에서 &quot;비밀정보&quot;라 함은 귀하가 프로젝트 참여 과정에서 인지하거나 접하는 모든 정보, 자료 데이터, 기술적 정보, 상업적 정보 및 기타 모든 형태의 정보를 포함하며, 이는 구두, 서면, 전자적 형태를 불문하고 포함됩니다.
+2. 본인은 프로젝트와 관련된 어떠한 정보도 회사의 사전 서면 동의 없이는 어떠한 방법으로도 경쟁업체나 제3자에게 제공하거나 누설하지 않으며, 부정한 목적으로도 공개하거나 사용하지 않을 것을 서약합니다.
+3. 본인은 프로젝트에 관한 모든 기밀 정보를 보호하기 위해 최선을 다할 것이며, 인터뷰 종료 후에도 이러한 의무는 계속 유지됨을 이해하고 동의합니다.
+
+---
+
+본인은 위의 내용을 충분히 이해하고 동의하며, 서약 내용을 위반할 경우 관련 법규에 의한 민·형사상 책임을 감수할 것을 서약합니다.
+
+
+통역확인 : 위 내용을 참여자의 모국어로 정확히 통역하였습니다.
+통역사 성명 : ____________         (날인/사인)
+
+2027년      월      일
+
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li><li><span class="step-num">3</span><div class="step-rule"></div><div class="step-text"><span class="step-main">사례비 지급을 위한 개인정보 활용 동의서</span><p>개인정보 항목이 외국인등록증·여권 사본으로 바뀌고, 원천징수액·실지급액을 함께 안내합니다.<br><span class="footnote">외국인 체류일 183일을 기준으로 세금이 달라질 수 있으니 관련된 확인이 필요합니다.</span></p><div class="example-box"><h4 class="h4-note">사례비 지급을 위한 개인정보 활용 동의서 양식</h4><pre class="cont-code"><code>사례비 지급을 위한 개인정보 활용 동의서
+
+
+개인정보 내용 : 외국인등록증 또는 여권 사본
+정보 활용     : 상기 참여자의 개인정보는 사례비 지급 및 영수를 위한 목적으로만 사용됩니다.
+지급 내용     : 조사 참여로 인한 사례비 지급
+                사례비     : 00,000원
+                원천징수액 : 00,000원
+                실지급액   : 00,000원
+                – 조사 완료 후 즉시 현금 지급
+
+---
+
+참가자 본인은 상기 개인정보 활용과 관련된 사항을 확인하였으며, 정보 활용 및 지급 내용에 동의함을 날인하여 확인합니다.
+
+
+통역확인 : 위 내용을 참여자의 모국어로 정확히 통역하였습니다.
+통역사 성명 : ____________         (날인/사인)
+
+2027년      월      일
+
+외국인등록번호 또는 여권번호 : ________________
+성명 : ________________         (날인/사인)
+
+사용자조사 제출서류  ·  (주)바이널씨</code></pre></div></div></li></ol></div></section>
+<section class="subpage" id="p30" data-page="p30"><h2>동의서 양식 - 외국인(통역사)</h2><p class="page-subtext">외국인 참여자를 위한 통역사도 조사 과정에서 접하게 되는 정보에 대해 비밀유지서약서와 개인정보 취급 확인서를 작성합니다.</p><div class="page-cont"><ol class="cont-steps cont-steps-wide"><li><span class="step-num">1</span><div class="step-rule"></div><div class="step-text"><span class="step-main">비밀유지서약서</span><p>조사 과정에서 알게 된 고객사·프로젝트 관련 정보와 조사 내용을 외부에 공개하거나 조사 목적 외로 사용하지 않도록 비밀유지 의무를 확인하기 위한 서류입니다.</p><div class="example-box"><h4 class="h4-note">통역사 비밀유지서약서 양식</h4><pre class="cont-code"><code>통역사 비밀유지서약서
+
+본인은 ○○ 서비스 사용성 인터뷰 통역 업무를 수행하면서 알게 된
+아래 내용을 외부에 공개하지 않을 것을 서약합니다.
+
+  1. 인터뷰 질문 내용 및 진행 방식
+  2. 인터뷰에서 제시된 화면, 프로토타입, 미공개 기능
+  3. 고객사명 및 본 프로젝트의 존재 사실
+
+비밀유지 기간 : 2027년 ○월 ○일까지
+
+성명 ____________  연락처 ____________
+날짜 ____________  서명 ____________</code></pre></div></div></li><li><span class="step-num">2</span><div class="step-rule"></div><div class="step-text"><span class="step-main">개인정보 취급 확인서</span><p>통역 과정에서 접하게 되는 참여자의 개인정보를 조사 목적 외로 사용하거나 제3자에게 제공하지 않고, 개인정보 보호 원칙에 따라 취급하도록 확인하기 위한 서류입니다.</p><div class="example-box"><h4 class="h4-note">통역사 개인정보 취급 확인서 양식</h4><pre class="cont-code"><code>통역사 개인정보 취급 확인서
+
+본인은 ○○ 서비스 사용성 인터뷰 통역 업무를 수행하면서 취급하는
+참여자의 개인정보에 대하여 아래를 확인·서약합니다.
+
+
+[법정 필수 항목]
+
+  1. 통역 업무 수행 목적 외의 어떤 목적으로도 참여자 정보를 사용하지 않습니다.
+  2. 통역 중 작성한 메모는 종료 후 회수·폐기하며, 개인 기기에 저장하지 않습니다.
+  3. 본 업무를 다른 사람에게 넘기거나, 대리인을 보내지 않습니다.
+  4. 녹음 파일·영상·전사록을 제공받지 않으며, 별도 협의 없이 접근하지 않습니다.
+  5. 회사가 위 사항의 준수 여부를 확인할 수 있음에 동의합니다.
+  6. 위 사항을 위반하여 손해가 발생한 경우 그에 대한 책임을 부담합니다.
+
+
+성명 ____________  연락처 ____________  소속 ____________
+날짜 ____________  서명 ____________</code></pre></div></div></li></ol></div></section>
+<section class="part-hero" id="p31" data-page="p31"><div class="part-kicker">V</div><h1 class="part-title">추가 개선 아이디어</h1><div class="part-intro"><p>본 가이드의 기준은 특정 조사 유형과 환경을 중심으로 정리되었습니다. 조사 방식·참여 인원·시료가 달라지는 경우 추가 확인이 필요한 항목과, 운영 방식을 개선하기 위해 검토가 필요한 아이디어·이슈를 함께 정리했습니다.</p>
+<p><span class="footnote">※ 이슈로 표기된 항목은 아직 검증되지 않았거나 추가 확인이 필요한 사항입니다. 다음 실사에서 확인한 뒤 본 가이드에 반영이 필요합니다.</span></p></div></section>
+<section class="subpage" id="p32" data-page="p32"><h2>조사 진행간 소통 방식</h2><p class="page-subtext"><span class="tag-pill tag-idea">아이디어</span> 진행 중 4층 보조 진행자가 진행자에게 필요한 내용을 전달하는 방식에 대한 제안입니다.</p><div class="page-cont"><h4>추천 방식 — 질문지 실시간 표시</h4><p>조사 시나리오(질문지)를 실시간 협업이 가능한 도구(e.g. Figma)에 공유하고, 진행자는 이를 태블릿 또는 노트북으로 확인합니다. 4층의 보조 진행자가 누락된 질문이나 확인이 필요한 내용을 실시간으로 표시하여, 진행자에게 필요한 내용을 전달합니다.</p><ul class="cont-list"><li>기대 효과: 진행 방해 최소화 · 진행자의 확인 타이밍 자율성 · 표시 이력 활용 가능</li><li>추가 검토 필요 사항: 사용할 도구, 표시 방식, 진행자의 인지 부담, 네트워크 연결 안정성</li></ul><div class="cont-img-solo cont-img-large"><figure class="cont-fig"><img src="assets/img-35.png" alt="원격 안내 질문지 도구 예시 이미지 — 실시간 협업 도구 화면(e.g. Figma)" loading="lazy"></figure></div><div class="table-box"><h4>함께 검토된 대안</h4><div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>후보 방식</th><th>장점</th><th>검토 포인트</th></tr></thead><tbody><tr><td>무선 이어피스(진행자 착용)</td><td>전달이 빠르고 즉각적인 대응 가능</td><td>인터뷰 중 안내를 동시에 들어야 해 진행자의 인지 부담이 커질 수 있으며, 안내 내용이 일회성으로 남지 않음</td></tr><tr><td>Google Chat·카카오톡 등 메신저</td><td>메시지 기록 확인 가능</td><td>진행자가 메시지를 읽기 위해 화면을 확인해야 하므로 인터뷰 중 시선 이탈이 발생할 수 있음</td></tr></tbody></table></div></div></div></section>
+<section class="subpage" id="p33" data-page="p33"><h2>IDI 조사실 배치</h2><p class="page-subtext"><span class="tag-pill tag-issue">이슈 · 미확정</span> 현재 IDI 배치도는 시료와 탑뷰 카메라를 사용하는 UT 환경을 기준으로 작성되어 있습니다.</p><div class="page-cont"><h4>배경</h4>
+<p>IDI는 UT와 달리 시료 없이 대화 중심으로 진행되는 조사 유형이지만, 현재 문서에는 IDI 전용 배치도가 별도로 마련되어 있지 않습니다. UT 배치도를 그대로 적용하기 어려운 부분이 있어 별도 확인이 필요합니다.</p>
+<h4>IDI 실사를 통해 하기 항목 확인</h4>
+<ul class="cont-list"><li>IDI 참여자·진행자 좌석 배치</li><li>탑뷰 시료 카메라 미사용 시 HDMI 3번 포트 활용 방식</li><li>조사 목적에 따른 카메라 구성 (e.g. IDI 참여자뷰·전경 CCTV 위치)</li></ul>
+<h4>참고</h4>
+<div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>참고 자료</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p07">UT 조사실 배치</a></td></tr><tr><td><a class="jump-link" href="#p12">시료 탑뷰 카메라 세팅</a></td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p34" data-page="p34"><h2>모바일 외 시료 탑뷰 세팅</h2><p class="page-subtext"><span class="tag-pill tag-issue">이슈 · 미검증</span> 이번 실사는 모바일 시료에 맞춰 탑뷰 환경을 세팅했습니다.</p><div class="page-cont"><h4>배경</h4>
+<p>현재 시료 탑뷰 카메라 설치 기준은 모바일 시료를 기준으로 검증된 내용입니다. 시료의 크기·형태가 달라지면 카메라 높이·화각·촬영 영역 기준도 함께 달라질 수 있어 재검증이 필요합니다.</p>
+<h4>모바일 외 다른 특성의 시료를 활용해 하기 항목 확인</h4>
+<ul class="cont-list"><li>시료 크기·형태에 따른 카메라 높이와 화각, 촬영 영역 범위</li><li>스탠드 위치 및 마스킹 테이프 기준 재확인</li></ul>
+<h4>참고</h4>
+<div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>참고 자료</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p12">시료 탑뷰 카메라 세팅</a></td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p35" data-page="p35"><h2>UT 외 조사 유형 장비·마이크 구성</h2><p class="page-subtext"><span class="tag-pill tag-issue">이슈 · 미확정</span> 현재 장비 세팅은 이번 UT 및 IDI 운영 기준을 중심으로 정리되어 있습니다.</p><div class="page-cont"><h4>배경</h4>
+<p>현재 문서의 장비·마이크 구성은 UT·IDI 기준으로 정리되어 있어, FGI 등 참여 인원과 진행 방식이 다른 조사 유형에 그대로 적용 가능한지는 확인되지 않았습니다.</p>
+<h4>UT 외 다른 조사 유형의 실사를 통해 하기 항목 확인</h4>
+<ul class="cont-list"><li>FGI·일반 IDI 등 조사 유형별 필요 마이크 수량과 종류</li><li>유선·무선 마이크 구성</li><li>카메라 수와 HDMI 포트 배정, 녹화·송출 방식</li></ul>
+<h4>참고</h4>
+<div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>참고 자료</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p10">1층 조사실 장비 세팅</a></td></tr><tr><td><a class="jump-link" href="#p06">조사 유형 확인</a></td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p36" data-page="p36"><h2>참여자 대기 장소·동선</h2><p class="page-subtext"><span class="tag-pill tag-issue">이슈</span> 참여자 대기 장소는 우선 B1층으로 계획하고 있으나, 실제 동선과 대기 환경은 다음 실사에서 확인이 필요합니다.</p><div class="page-cont"><h4>배경</h4>
+<p>참여자 대기 장소는 현재 B1층으로 계획하고 있지만, 가이드 문서에 별도로 정리된 내용은 없어 실제 동선(건물 진입부터 대기 장소까지)과 대기 환경(공간·안내 방식)은 아직 실사로 검증이 필요합니다.</p>
+<h4>다음 실사를 통해 하기 항목 확인</h4>
+<ul class="cont-list"><li>B1층 대기 장소까지의 실제 동선 및 대기 환경</li><li>참여자 안내 방식 (동선 안내, 표지판 등)</li></ul>
+<h4>참고</h4>
+<div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>참고 자료</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p09">회의실 예약</a></td></tr></tbody></table></div></div></section>
+<section class="subpage" id="p37" data-page="p37"><h2>STT Raw data 정제 및 Matrix Table 작성</h2><p class="page-subtext"><span class="tag-pill tag-issue">이슈</span> 지금까지는 Raw data를 분석용 Matrix Table로 정리하는 작업을 수작업으로 진행해, 상당한 리소스가 소요되고 있습니다.</p><div class="page-cont"><h4>배경</h4>
+<p>지금까지는 스크립트 변환 후 실제 분석에 들어가기 전, Raw data를 Matrix Table(엑셀 정리) 형태로 만드는 과정을 담당자가 직접 수작업으로 진행해왔습니다. 이 과정에서 상당한 시간과 리소스가 소요되어 효율화가 필요하며, 효율화 이후 실제 분석을 진행하는 과정에서 필요한 스킬·진행 방법도 함께 고려되어야 합니다.</p>
+<h4>Matrix Table 정제 효율화 방안 검토를 통해 하기 항목 확인</h4>
+<ul class="cont-list"><li>자동 정제·분류 등 업무 효율화에 활용 가능한 AI 도구·방식</li><li>적용 시 예상되는 리소스 절감 효과</li><li>효율화 이후 실제 분석 진행에 필요한 스킬 및 진행 방법</li></ul>
+<h4>참고</h4>
+<div class="cont-table-wrap"><table class="cont-table"><thead><tr><th>참고 자료</th></tr></thead><tbody><tr><td><a class="jump-link" href="#p21">스크립트 정리 방법</a></td></tr></tbody></table></div></div></section>
+<section class="changelog-footer"><h3 class="changelog-title">변경 이력</h3><div class="cont-table-wrap"><table class="changelog-table"><thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody><tr><td>v1.00</td><td>2026-08-28</td><td>SD4 그룹 - 이아현</td><td><strong>최초 생성</strong>: 사용자 조사 환경 셋팅 가이드의 최초 공식 버전. 조사 사전 준비(장비 세팅·회의실 예약)부터 조사 진행(인력 구성·마이크 착용·외국인 인터뷰·스크립트 정리), 부록(장비 사양·저장매체·참여자 컨택·동의서 양식), 추가 개선 아이디어까지 전체 실행 절차를 하나의 문서로 정리함.</td></tr></tbody></table></div><p class="changelog-note">※ 향후 업데이트 시 파일명 버전을 올려(v0.14 → v0.15) 신규 생성하고, 기존 버전은 보존합니다.</p></section>
+</main>
+
+<script>
+const pageIds = ["p01", "p02", "p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22", "p23", "p24", "p25", "p26", "p27", "p28", "p29", "p30", "p31", "p32", "p33", "p34", "p35", "p36", "p37"];
+const navLinks = Array.from(document.querySelectorAll('#sidebar a[data-page]'));
+const sections = pageIds.map(id => document.querySelector('[data-page="' + id + '"]')).filter(Boolean);
+const linkById = {};
+navLinks.forEach(a => { linkById[a.dataset.page] = a; });
+
+function expandGroupOf(id){
+  const el = linkById[id];
+  const block = el && el.closest('.nav-group-block');
+  if(block) block.classList.add('expanded');
+}
+
+function setActive(id){
+  navLinks.forEach(a => a.classList.toggle('active', a.dataset.page === id));
+  const active = linkById[id];
+  if(active) active.scrollIntoView({block:'nearest'});
+  expandGroupOf(id);
+}
+
+const io = new IntersectionObserver((entries) => {
+  let best = null, bestTop = Infinity;
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const top = Math.abs(e.boundingClientRect.top);
+      if(top < bestTop){ bestTop = top; best = e.target; }
+    }
+  });
+  if(best) setActive(best.dataset.page);
+}, { rootMargin: '-10% 0px -70% 0px', threshold: [0, 0.1, 0.5] });
+
+sections.forEach(s => io.observe(s));
+
+navLinks.forEach(a=>{
+  a.addEventListener('click', ()=> setActive(a.dataset.page));
+});
+
+document.querySelectorAll('.nav-chevron').forEach(ch=>{
+  ch.addEventListener('click', e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const block = ch.closest('.nav-group-block');
+    if(block) block.classList.toggle('expanded');
+  });
+});
+
+document.getElementById('search').addEventListener('input', e=>{
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('#sidebar .nav-item, #sidebar .nav-cover, #sidebar .nav-group').forEach(a=>{
+    a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('#sidebar .nav-section-label').forEach(l=>{
+    l.style.display = q ? 'none' : '';
+  });
+  document.querySelectorAll('.nav-group-block').forEach(block=>{
+    block.classList.toggle('expanded', !!q);
+  });
+  if(!q){
+    const active = navLinks.find(a => a.classList.contains('active'));
+    if(active) expandGroupOf(active.dataset.page);
+  }
+});
+
+if(pageIds.length) setActive(pageIds[0]);
+</script>
+</body>
+</html>
